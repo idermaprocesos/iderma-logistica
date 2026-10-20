@@ -1,0 +1,16 @@
+<Project Sdk="WixToolset.Sdk/5.0.2">
+  <PropertyGroup>
+    <OutputName>IdermaCapilarApp</OutputName>
+    <OutputType>Package</OutputType>
+    <InstallerPlatform>x64</InstallerPlatform>
+    <Cultures>es-ES</Cultures>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <SuppressIces>ICE03;ICE38;ICE43;ICE57;ICE60;ICE61</SuppressIces>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Package.wxs" />
+    <BindPath Include="$(MSBuildProjectDirectory)\payload" BindName="Payload" />
+    <None Include="License.es-ES.rtf" />
+    <PackageReference Include="WixToolset.UI.wixext" Version="5.0.2" />
+  </ItemGroup>
+</Project>

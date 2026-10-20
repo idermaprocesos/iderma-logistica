@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="IdermaFichas.Pages.RhRiesgoPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Grid Padding="24,16,24,16" RowSpacing="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <StackPanel Spacing="4">
+                <TextBlock Style="{StaticResource TituloPaginaStyle}" Text="Riesgo de colaborador" />
+                <TextBlock
+                    Style="{StaticResource SubtituloPaginaStyle}"
+                    Text="Evalúe el riesgo laboral o de permanencia (tardanzas, faltas, desempeño) y deje las acciones de seguimiento." />
+            </StackPanel>
+            <Button
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Click="Nuevo_Click"
+                Style="{StaticResource AccentButtonStyle}"
+                Content="Nueva evaluación" />
+        </Grid>
+
+        <Grid Grid.Row="1" ColumnSpacing="16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="380" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <ListView x:Name="Lista" SelectionChanged="Lista_SelectionChanged">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Padding="0,8" Spacing="2">
+                            <TextBlock FontWeight="SemiBold" Text="{Binding Nombre}" />
+                            <TextBlock Opacity="0.7" Text="{Binding Detalle}" />
+                            <TextBlock Opacity="0.55" Text="{Binding Extra}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <ScrollViewer Grid.Column="1">
+                <StackPanel x:Name="Formulario" Spacing="12" Visibility="Collapsed">
+                    <ComboBox x:Name="ComboColaborador" DisplayMemberPath="Nombre" Header="Colaborador" HorizontalAlignment="Stretch" />
+                    <DatePicker x:Name="Fecha" Header="Fecha de evaluación" />
+                    <ComboBox x:Name="ComboNivel" Header="Nivel de riesgo" HorizontalAlignment="Stretch" />
+                    <TextBox x:Name="CajaMotivo" Header="Motivo" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="72" />
+                    <TextBox x:Name="CajaAcciones" Header="Acciones de seguimiento" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="72" />
+                    <TextBlock x:Name="ResumenIndicadores" Opacity="0.72" TextWrapping="Wrap" />
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Button Click="Guardar_Click" Content="Guardar" Style="{StaticResource AccentButtonStyle}" />
+                        <Button Click="Borrar_Click" Content="Eliminar" />
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</Page>

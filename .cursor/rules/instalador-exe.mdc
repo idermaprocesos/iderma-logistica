@@ -1,0 +1,42 @@
+---
+description: Empaquetar instalador .exe de Iderma Capilar App (WinUI unpackaged). Aplicar al pedir instalador, WiX, bootstrapper, MSI o .exe para otra PC. Nunca usar dotnet publish como payload.
+globs: installer/**,IdermaFichas.csproj,Program.cs,publish-store.ps1
+alwaysApply: false
+---
+
+# Instalador WinUI unpackaged (otra PC)
+
+App WinUI 3 unpackaged (`WindowsPackageType=None`, `WindowsAppSDKSelfContained=true`, `IdermaFichas.csproj`, ensamblado `IdermaCapilarApp`). No es un `.exe` suelto: necesita toda la carpeta de salida.
+
+Objetivo: un instalador para Windows 10 1809+ x64 y Windows 11 x64 que **abra de verdad** tras instalar, no solo que compile.
+
+## Cómo empaquetar (obligatorio)
+
+1. **No uses `dotnet publish` como payload.** En este proyecto `publish` altera `WinRT.Runtime.dll` (pasa de ~529 KB a ~1,3 MB) y el programa se cierra al instante con `MissingMethodException` (`SetEnvironmentVariable`, `ComWrappersSupport.InitializeComWrappers`, `ComInterfaceEntry`).
+2. Empaqueta la salida de **`dotnet build -c Release -p:Platform=x64 -r win-x64 --self-contained true`**, carpeta  
+   `bin\x64\Release\net8.0-windows10.0.26100.0\win-x64\`  
+   (excluye `*.pdb` y `IdermaCapilarApp.exe.WebView2`).
+3. Mantén **`PublishTrimmed=false`**, **`PublishReadyToRun=false`**, **`PublishSingleFile=false`**, **`CsWinRTAotOptimizerEnabled=false`**, **`WindowsAppSdkUndockedRegFreeWinRTInitialize=false`**.
+4. Conserva `Program.cs` propio (`DISABLE_XAML_GENERATED_MAIN`): variables de WASDK con **P/Invoke kernel32**, **sin** `ComWrappersSupport.InitializeComWrappers()`, y MessageBox si hay excepción.
+5. Las copias de seguridad viven en `%LOCALAPPDATA%\IdermaCapilar\copias`. **No las borres ni las metas en el MSI.** No ejecutes copias automáticas en el constructor de `MainWindow`; solo **después** de que la ventana ya esté visible.
+6. Sube la versión del MSI/Bundle (`MajorUpgrade`) para reemplazar instalaciones viejas. Datos de AppData se quedan.
+
+## Instalador
+
+- Entregar **un solo `.exe` bootstrapper** (WiX Burn) en el escritorio, con el MSI **dentro**. No hace falta el `.msi` suelto.
+- Idioma **español**, icono del programa (`img\logo.ico`).
+- Licencia genérica **sin nombrar Iderma**; pie: **Elaborado por: Piero Zavala Ayala**.
+- UI **estándar** `WixUI` / `rtfLicense` de WiX. **No** temas personalizados con fondos que tapen controles (en modo oscuro el texto desaparece).
+- Incluir VC++ 2015–2022 x64 y WebView2 (Evergreen) si faltan.
+- Accesos en Inicio y escritorio con `WorkingDirectory` = carpeta de instalación.
+
+## Verificación (obligatoria)
+
+1. Arrancar **el payload** (`IdermaCapilarApp.exe` de la carpeta que va al MSI) y confirmar que la ventana permanece abierta ≥5 s.
+2. Tras instalar (o simular copiando a `Program Files\Iderma Capilar App`), arrancar **esa** copia, no la de `bin` de Visual Studio.
+3. Si se cierra al instante, leer Visor de eventos → Aplicación (`.NET Runtime` 1026). Un F5/Debug que funcione **no** cuenta: Debug usa otras DLL.
+4. No usar la carpeta suelta del escritorio (`IdermaCapilarApp`) como distribución.
+
+## No repetir
+
+Recorte/R2R, `dotnet publish` como origen del instalador, tema WiX custom, inicializador de módulo WASDK, optimizador AOT de CsWinRT, sobrescribir backups, entregar solo el `.exe` de la app sin sus DLL.

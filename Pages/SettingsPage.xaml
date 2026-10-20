@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="IdermaFichas.Pages.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <ScrollViewer x:Name="DesplazamientoConfig">
+        <StackPanel MaxWidth="860" Padding="32,20,32,32" Spacing="20" HorizontalAlignment="Left">
+            <StackPanel Spacing="6">
+                <TextBlock Style="{StaticResource TituloPaginaStyle}" Text="Configuración" />
+                <TextBlock
+                    Style="{StaticResource SubtituloPaginaStyle}"
+                    Text="Administre actualizaciones, el acceso a la base de datos, autoguardado, medicación común, desplegables, el archivo de fichas y las copias de seguridad." />
+            </StackPanel>
+
+            <InfoBar
+                x:Name="BarraEstado"
+                IsClosable="True"
+                IsOpen="False" />
+
+            <Border
+                x:Name="TarjetaAyudaTrabajador"
+                Padding="20"
+                CornerRadius="12">
+                <Border.Background>
+                    <SolidColorBrush Color="{ThemeResource CardBackgroundFillColorDefault}" />
+                </Border.Background>
+                <StackPanel Spacing="12">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <FontIcon
+                            VerticalAlignment="Center"
+                            FontSize="20"
+                            Glyph="&#xE897;" />
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontWeight="SemiBold"
+                            Text="Ayuda a trabajador nuevo" />
+                    </StackPanel>
+                    <TextBlock
+                        Opacity="0.72"
+                        Text="Recorrido guiado con globos de ayuda sobre el menú, cada sección y los bloques de esta configuración. Puede salirse en cualquier momento y repetirlo cuando quiera."
+                        TextWrapping="Wrap" />
+                    <Button
+                        Click="IniciarTourTrabajador_Click"
+                        Content="Iniciar recorrido guiado"
+                        Style="{StaticResource AccentButtonStyle}" />
+                </StackPanel>
+            </Border>
+
+            <Border
+                x:Name="TarjetaTroubleshooting"
+                Padding="20"
+                CornerRadius="12">
+                <Border.Background>
+                    <SolidColorBrush Color="{ThemeResource CardBackgroundFillColorDefault}" />
+                </Border.Background>
+                <StackPanel Spacing="12">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <FontIcon
+                            VerticalAlignment="Center"
+                            FontSize="20"
+                            Glyph="&#xE9D9;" />
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontWeight="SemiBold"
+                            Text="Troubleshooting" />
+                    </StackPanel>
+                    <TextBlock
+                        Opacity="0.72"
+                        Text="Comprueba si este equipo puede entrar a la base de datos. Si falla, indica el error y qué hacer para corregirlo."
+                        TextWrapping="Wrap" />
+                    <Button
+                        x:Name="BotonComprobarBase"
+                        Click="ComprobarBase_Click"
+                        Content="Comprobar acceso a la base de datos" />
+                    <ProgressRing
+                        x:Name="AnilloBase"
+                        Width="24"
+                        Height="24"
+                        HorizontalAlignment="Left"
+                        IsActive="False"
+                        Visibility="Collapsed" />
+                    <InfoBar
+                        x:Name="BarraBase"
+                        IsClosable="False"
+                        IsOpen="False" />
+                    <TextBlock
+                        x:Name="TextoErrorBase"
+                        IsTextSelectionEnabled="True"
+                        Opacity="0.78"
+                        TextWrapping="Wrap"
+                        Visibility="Collapsed" />
+                    <TextBlock
+                        x:Name="TextoSolucionBase"
+                        IsTextSelectionEnabled="True"
+                        TextWrapping="Wrap"
+                        Visibility="Collapsed" />
+                </StackPanel>
+            </Border>
+
+            <Border
+                x:Name="TarjetaActualizacion"
+                Padding="20"
+                CornerRadius="12">
+                <Border.Background>
+                    <SolidColorBrush Color="{ThemeResource CardBackgroundFillColorDefault}" />
+                </Border.Background>
+                <StackPanel Spacing="12">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <FontIcon
+                            VerticalAlignment="Center"
+                            FontSize="20"
+                            Glyph="&#xE895;" />
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontWeight="SemiBold"
+                            Text="Actualizar programa" />
+                    </StackPanel>
+                    <TextBlock
+                        Opacity="0.72"
+                        Text="La misma versión de GitHub se comprueba al iniciar sesión en Iderma Launcher, para que logística y el resto del programa no queden en versiones distintas. Aquí puede descargar e instalar: se cierra el programa, se crea una copia y se abre el instalador. Restaurar usa la penúltima publicada."
+                        TextWrapping="Wrap" />
+                    <TextBlock x:Name="TextoVersionActual" Opacity="0.78" TextWrapping="Wrap" />
+                    <ProgressBar
+                        x:Name="BarraActualizacion"
+                        Maximum="100"
+                        Visibility="Collapsed" />
+                    <TextBlock
+                        x:Name="TextoProgresoActualizacion"
+                        Opacity="0.72"
+                        TextWrapping="Wrap"
+                        Visibility="Collapsed" />
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Button
+                            x:Name="BotonActualizar"
+                            Click="ActualizarPrograma_Click"
+                            Content="Buscar y descargar actualización" />
+                        <Button
+                            x:Name="BotonRestaurar"
+                            Click="RestaurarVersionAnterior_Click"
+                            Content="Restaurar versión anterior" />
+                        <Button
+                            x:Name="BotonInstalar"
+                            Click="InstalarActualizacion_Click"
+                            Content="Instalar"
+                            Style="{StaticResource AccentButtonStyle}"
+                            Visibility="Collapsed" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border
+                x:Name="TarjetaAutoguardado"
+                Padding="20"
+                CornerRadius="12">
+                <Border.Background>
+                    <SolidColorBrush Color="{ThemeResource CardBackgroundFillColorDefault}" />
+                </Border.Background>
+                <StackPanel Spacing="12">
+                    <TextBlock FontWeight="SemiBold" Text="Autoguardado" />
+                    <TextBlock
+                        Opacity="0.72"
+                        Text="Si está editando una ficha, la guarda en segundo plano a los 15 segundos y lo deja seguir escribiendo. El intervalo de abajo es un respaldo extra. Incluye área, existencias, características e imagen. En paralelo, si las copias están activas, se respalda el catálogo, las áreas, los desplegables, RR. HH., el registro de ingresos y salidas, las fotos y los recibos."
+                        TextWrapping="Wrap" />
+                    <ToggleSwitch
+                        x:Name="ToggleAutoguardado"
+                        Header="Activar autoguardado"
+                        OffContent="Desactivado"
+                        OnContent="Activado"
+                        Toggled="Autoguardado_Cambiado" />
+                    <ComboBox
+                        x:Name="ComboIntervalo"
+                        Header="Intervalo"
+                        HorizontalAlignment="Stretch"
+                        SelectionChanged="Autoguardado_Cambiado">
+                        <ComboBoxItem Content="Cada 5 minutos" Tag="5" />
+                        <ComboBoxItem Content="Cada 10 minutos" Tag="10" />
+                        <ComboBoxItem Content="Cada 20 minutos" Tag="20" />
+                        <ComboBoxItem Content="Cada 30 minutos" Tag="30" />
+                    </ComboBox>
+                </StackPanel>
+            </Border>
+
+            <Border
+                x:Name="TarjetaMedicacion"
+                Padding="20"
+                CornerRadius="12">
+                <Border.Background>
+                    <SolidColorBrush Color="{ThemeResource CardBackgroundFillColorDefault}" />
+                </Border.Background>
+                <StackPanel Spacing="12">
+                    <TextBlock FontWeight="SemiBold" Text="Medicación común (recetas)" />
+                    <TextBlock
+                        Opacity="0.72"
+                        Text="Importe un Excel con estos encabezados: Nombre del medicamento, Dosis (cantidad), Unidad de la dosis, Vía, Frecuencia, Horario, Duración del tratamiento, Cantidad a despachar, Presentación y Cómo usarlo. En Recetas aparecerán como sugerencia al escribir el nombre."
+                        TextWrapping="Wrap" />
+                    <TextBlock x:Name="ResumenMedicacionComun" Opacity="0.78" TextWrapping="Wrap" />
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Button Click="PlantillaMedicacion_Click" Content="Plantilla Excel" />
+                        <Button
+                            Click="ImportarMedicacion_Click"
+                            Content="Importar Excel"
+                            Style="{StaticResource AccentButtonStyle}" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border
+                x:Name="TarjetaCopias"
+                Padding="20"
+                CornerRadius="12">
+                <Border.Background>
+                    <SolidColorBrush Color="{ThemeResource CardBackgroundFillColorDefault}" />
+                </Border.Background>
+                <StackPanel Spacing="12">
+                    <TextBlock FontWeight="SemiBold" Text="Copias de seguridad" />
+                    <TextBlock
+                        Opacity="0.72"
+                        Text="Cada copia guarda fichas, características, áreas operativas, desplegables, recursos humanos, el historial de ingresos y salidas y los recibos adjuntos. Si activa imágenes, también incluye las fotos de producto. Se recortan las más antiguas según el máximo indicado."
+                        TextWrapping="Wrap" />
+                    <ToggleSwitch
+                        x:Name="ToggleCopias"
+                        Header="Crear copias automáticas"
+                        OffContent="Desactivado"
+                        OnContent="Activado"
+                        Toggled="Copias_Cambiado" />
+                    <ToggleSwitch
+                        x:Name="ToggleImagenesCopia"
+                        Header="Incluir fotos de producto"
+                        OffContent="Datos y recibos"
+                        OnContent="Datos, recibos y fotos"
+                        Toggled="Copias_Cambiado" />
+                    <ComboBox
+                        x:Name="ComboIntervaloCopia"
+                        Header="Frecuencia"
+                        HorizontalAlignment="Stretch"
+                        SelectionChanged="Copias_Cambiado">
+                        <ComboBoxItem Content="Cada hora" Tag="1" />
+                        <ComboBoxItem Content="Cada 6 horas" Tag="6" />
+                        <ComboBoxItem Content="Cada 12 horas" Tag="12" />
+                        <ComboBoxItem Content="Cada 24 horas" Tag="24" />
+                    </ComboBox>
+                    <ComboBox
+                        x:Name="ComboMaximoCopias"
+                        Header="Máximo de copias a conservar"
+                        HorizontalAlignment="Stretch"
+                        SelectionChanged="Copias_Cambiado">
+                        <ComboBoxItem Content="5 copias" Tag="5" />
+                        <ComboBoxItem Content="10 copias" Tag="10" />
+                        <ComboBoxItem Content="20 copias" Tag="20" />
+                        <ComboBoxItem Content="40 copias" Tag="40" />
+                    </ComboBox>
+                    <TextBlock x:Name="TextoUltimaCopia" Opacity="0.72" TextWrapping="Wrap" />
+                    <ListView
+                        x:Name="ListaCopias"
+                        MaxHeight="200"
+                        SelectionMode="Single">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Padding="0,4" Spacing="2">
+                                    <TextBlock FontWeight="SemiBold" Text="{Binding Titulo}" />
+                                    <TextBlock Opacity="0.7" Text="{Binding Detalle}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Button Click="CrearCopia_Click" Content="Crear copia ahora" Style="{StaticResource AccentButtonStyle}" />
+                        <Button Click="RestaurarCopia_Click" Content="Restaurar seleccionada" />
+                        <Button Click="AbrirCarpetaCopias_Click" Content="Abrir carpeta" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border
+                x:Name="TarjetaAreas"
+                Padding="20"
+                CornerRadius="12">
+                <Border.Background>
+                    <SolidColorBrush Color="{ThemeResource CardBackgroundFillColorDefault}" />
+                </Border.Background>
+                <StackPanel Spacing="12">
+                    <TextBlock FontWeight="SemiBold" Text="Áreas operativas" />
+                    <TextBlock
+                        Opacity="0.72"
+                        Text="Cambie el nombre, el icono o el prefijo de un área, agregue áreas nuevas o bórrelas. Use las flechas para el orden del menú y del inicio. El icono aparece en el menú lateral. Si borra un área, sus productos quedan sin área."
+                        TextWrapping="Wrap" />
+                    <Grid ColumnSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <ListView
+                            x:Name="ListaAreas"
+                            MaxHeight="180"
+                            SelectionChanged="ListaAreas_SelectionChanged">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Spacing="10" Padding="0,4">
+                                        <FontIcon Glyph="{Binding Glifo}" FontSize="16" />
+                                        <TextBlock VerticalAlignment="Center" Text="{Binding Nombre}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                        <StackPanel
+                            Grid.Column="1"
+                            VerticalAlignment="Top"
+                            Spacing="8">
+                            <Button
+                                Click="SubirArea_Click"
+                                Padding="10,8"
+                                ToolTipService.ToolTip="Subir en el menú">
+                                <FontIcon FontSize="14" Glyph="&#xE74A;" />
+                            </Button>
+                            <Button
+                                Click="BajarArea_Click"
+                                Padding="10,8"
+                                ToolTipService.ToolTip="Bajar en el menú">
+                                <FontIcon FontSize="14" Glyph="&#xE74B;" />
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                    <TextBox x:Name="CajaNombreArea" Header="Nombre del área" />
+                    <TextBox x:Name="CajaDescripcionArea" Header="Descripción" AcceptsReturn="True" />
+                    <TextBox x:Name="CajaPrefijoArea" Header="Prefijo de código (2 a 6 letras o números, ej. CLI)" MaxLength="6" />
+                    <TextBlock Text="Icono del menú" />
+                    <GridView
+                        x:Name="CuadriculaIconoArea"
+                        MaxHeight="240"
+                        SelectionMode="Single"
+                        ScrollViewer.HorizontalScrollMode="Disabled"
+                        ScrollViewer.VerticalScrollBarVisibility="Auto">
+                        <GridView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsWrapGrid MaximumRowsOrColumns="8" Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </GridView.ItemsPanel>
+                        <GridView.ItemContainerStyle>
+                            <Style TargetType="GridViewItem">
+                                <Setter Property="Margin" Value="2" />
+                                <Setter Property="MinWidth" Value="0" />
+                                <Setter Property="MinHeight" Value="0" />
+                                <Setter Property="Padding" Value="0" />
+                            </Style>
+                        </GridView.ItemContainerStyle>
+                        <GridView.ItemTemplate>
+                            <DataTemplate>
+                                <Border Width="44" Height="44" ToolTipService.ToolTip="{Binding Nombre}">
+                                    <FontIcon
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontSize="20"
+                                        Glyph="{Binding Glifo}" />
+                                </Border>
+                            </DataTemplate>
+                        </GridView.ItemTemplate>
+                    </GridView>
+                    <ComboBox
+                        x:Name="ComboPlantillaArea"
+                        Header="Formulario (campos particulares)"
+                        HorizontalAlignment="Stretch">
+                        <ComboBoxItem Content="Clínica" Tag="Clinica" />
+                        <ComboBoxItem Content="Oficina" Tag="Oficina" />
+                        <ComboBoxItem Content="Limpieza" Tag="Limpieza" />
+                    </ComboBox>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Button Click="AgregarArea_Click" Content="Agregar área" Style="{StaticResource AccentButtonStyle}" />
+                        <Button Click="GuardarArea_Click" Content="Guardar nombre y datos" />
+                        <Button Click="BorrarArea_Click" Content="Borrar área" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border
+                x:Name="TarjetaDesplegables"
+                Padding="20"
+                CornerRadius="12">
+                <Border.Background>
+                    <SolidColorBrush Color="{ThemeResource CardBackgroundFillColorDefault}" />
+                </Border.Background>
+                <StackPanel Spacing="12">
+                    <TextBlock FontWeight="SemiBold" Text="Desplegables de los formularios" />
+                    <TextBlock
+                        Opacity="0.72"
+                        Text="Elija el área y luego el desplegable que quiere editar. Cada área tiene sus propias listas: categoría, unidad, color, procedencia y las particulares de esa área."
+                        TextWrapping="Wrap" />
+                    <ComboBox
+                        x:Name="ComboAreaListas"
+                        HorizontalAlignment="Stretch"
+                        DisplayMemberPath="Nombre"
+                        PlaceholderText="Área del formulario"
+                        SelectionChanged="ComboAreaListas_SelectionChanged" />
+                    <ComboBox
+                        x:Name="ComboListas"
+                        HorizontalAlignment="Stretch"
+                        PlaceholderText="Elija el desplegable a editar"
+                        SelectionChanged="ComboListas_SelectionChanged" />
+                    <ListView
+                        x:Name="ListaValores"
+                        MaxHeight="220"
+                        SelectionChanged="ListaValores_SelectionChanged" />
+                    <TextBox
+                        x:Name="CajaValor"
+                        PlaceholderText="Escriba un valor para agregar o editar" />
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Button Click="AgregarValor_Click" Content="Agregar" Style="{StaticResource AccentButtonStyle}" />
+                        <Button Click="EditarValor_Click" Content="Guardar cambio" />
+                        <Button Click="BorrarValor_Click" Content="Borrar valor" />
+                        <Button Click="RestaurarLista_Click" Content="Restaurar esta lista" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border
+                x:Name="TarjetaExportar"
+                Padding="20"
+                CornerRadius="12">
+                <Border.Background>
+                    <SolidColorBrush Color="{ThemeResource CardBackgroundFillColorDefault}" />
+                </Border.Background>
+                <StackPanel Spacing="12">
+                    <TextBlock FontWeight="SemiBold" Text="Exportar información" />
+                    <TextBlock
+                        Opacity="0.72"
+                        Text="Descarga un archivo ZIP con lo que elija: fichas, características, áreas, desplegables, personal, registro de ingresos y salidas, recibos, fotos y preferencias."
+                        TextWrapping="Wrap" />
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Button Click="SeleccionarTodoExportar_Click" Content="Seleccionar todo" />
+                        <Button Click="QuitarTodoExportar_Click" Content="Quitar todo" />
+                    </StackPanel>
+                    <Grid ColumnSpacing="16" RowSpacing="4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Spacing="4">
+                            <CheckBox x:Name="CheckExportarFichas" Content="Fichas técnicas" IsChecked="True" />
+                            <CheckBox x:Name="CheckExportarCaracteristicas" Content="Características" IsChecked="True" />
+                            <CheckBox x:Name="CheckExportarAreas" Content="Áreas operativas" IsChecked="True" />
+                            <CheckBox x:Name="CheckExportarDesplegables" Content="Desplegables" IsChecked="True" />
+                            <CheckBox x:Name="CheckExportarRh" Content="Recursos humanos" IsChecked="True" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Spacing="4">
+                            <CheckBox x:Name="CheckExportarRegistro" Content="Registro de ingresos y salidas" IsChecked="True" />
+                            <CheckBox x:Name="CheckExportarRecibos" Content="Recibos de movimientos" IsChecked="True" />
+                            <CheckBox x:Name="CheckExportarFotos" Content="Fotos de producto" IsChecked="True" />
+                            <CheckBox x:Name="CheckExportarPreferencias" Content="Preferencias de la app" IsChecked="True" />
+                        </StackPanel>
+                    </Grid>
+                    <Button
+                        Click="ExportarSeleccion_Click"
+                        Content="Exportar selección"
+                        Style="{StaticResource AccentButtonStyle}" />
+                </StackPanel>
+            </Border>
+
+            <Border
+                x:Name="TarjetaArchivoDatos"
+                Padding="20"
+                CornerRadius="12">
+                <Border.Background>
+                    <SolidColorBrush Color="{ThemeResource CardBackgroundFillColorDefault}" />
+                </Border.Background>
+                <StackPanel Spacing="10">
+                    <TextBlock FontWeight="SemiBold" Text="Archivo de datos" />
+                    <TextBlock x:Name="RutaDatos" IsTextSelectionEnabled="True" TextWrapping="Wrap" />
+                    <TextBlock x:Name="ResumenDatos" Opacity="0.72" />
+                    <TextBlock x:Name="RutaCopias" Opacity="0.72" IsTextSelectionEnabled="True" TextWrapping="Wrap" />
+                    <StackPanel Spacing="8">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Button Click="ImportarExcel_Click" Content="Importar Excel" Style="{StaticResource AccentButtonStyle}" />
+                            <Button Click="PlantillaExcel_Click" Content="Descargar plantilla Excel" />
+                            <Button Click="Restaurar_Click" Content="Restaurar ejemplos" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Button Click="Exportar_Click" Content="Exportar JSON" />
+                            <Button Click="Importar_Click" Content="Importar JSON" />
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border
+                x:Name="TarjetaBorrarBase"
+                Padding="20"
+                CornerRadius="12">
+                <Border.Background>
+                    <SolidColorBrush Color="{ThemeResource CardBackgroundFillColorDefault}" />
+                </Border.Background>
+                <StackPanel Spacing="10">
+                    <TextBlock FontWeight="SemiBold" Text="Borrar base de datos" />
+                    <TextBlock
+                        Opacity="0.75"
+                        Text="Vacía el catálogo de fichas y el historial de ingresos. Antes de borrar se crea una copia completa con fecha y hora (fichas, características, áreas, desplegables, RR. HH., registro y recibos)."
+                        TextWrapping="Wrap" />
+                    <Button Click="BorrarBase_Click" Content="Borrar base de datos" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</Page>

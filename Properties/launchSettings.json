@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "IdermaFichas (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "IdermaFichas (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

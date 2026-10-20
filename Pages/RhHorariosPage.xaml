@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="IdermaFichas.Pages.RhHorariosPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:models="using:IdermaFichas.Models">
+
+    <Grid Padding="24,16,24,16" RowSpacing="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Spacing="4">
+            <TextBlock Style="{StaticResource TituloPaginaStyle}" Text="Horarios" />
+            <TextBlock
+                Style="{StaticResource SubtituloPaginaStyle}"
+                Text="Jornada semanal de cada colaborador. Marque los días de descanso y la hora de entrada y salida." />
+        </StackPanel>
+
+        <ComboBox
+            x:Name="ComboColaborador"
+            Grid.Row="1"
+            HorizontalAlignment="Left"
+            MinWidth="320"
+            DisplayMemberPath="Nombre"
+            Header="Colaborador"
+            SelectionChanged="ComboColaborador_SelectionChanged" />
+
+        <Grid Grid.Row="2" RowSpacing="8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <ListView x:Name="ListaDias">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="models:HorarioDia">
+                        <Grid Padding="0,8" ColumnSpacing="16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="120" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" FontWeight="SemiBold" Text="{x:Bind DiaTexto}" />
+                            <ToggleSwitch
+                                Grid.Column="1"
+                                IsOn="{x:Bind Laborable, Mode=TwoWay}"
+                                OffContent="Descanso"
+                                OnContent="Laborable" />
+                            <TimePicker
+                                Grid.Column="2"
+                                ClockIdentifier="24HourClock"
+                                Header="Entrada"
+                                Time="{x:Bind Entrada, Mode=TwoWay}" />
+                            <TimePicker
+                                Grid.Column="3"
+                                ClockIdentifier="24HourClock"
+                                Header="Salida"
+                                Time="{x:Bind Salida, Mode=TwoWay}" />
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <StackPanel Grid.Row="1" Spacing="8">
+                <InfoBar x:Name="Barra" IsClosable="True" IsOpen="False" />
+                <Button
+                    Click="Guardar_Click"
+                    Content="Guardar horario"
+                    Style="{StaticResource AccentButtonStyle}" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Page>

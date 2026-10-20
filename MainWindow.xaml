@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Window
+    x:Class="IdermaFichas.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Iderma Capilar — Área logística"
+    mc:Ignorable="d">
+    <Window.SystemBackdrop>
+        <MicaBackdrop />
+    </Window.SystemBackdrop>
+
+    <Grid x:Name="RaizVentana">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <TitleBar
+            x:Name="AppTitleBar"
+            Title="Iderma Capilar"
+            Subtitle="Área logística"
+            BackRequested="TitleBar_BackRequested"
+            IsBackButtonVisible="{x:Bind NavFrame.CanGoBack, Mode=OneWay}"
+            IsPaneToggleButtonVisible="True"
+            PaneToggleRequested="TitleBar_PaneToggleRequested">
+            <TitleBar.IconSource>
+                <ImageIconSource ImageSource="img/logo.ico" />
+            </TitleBar.IconSource>
+        </TitleBar>
+
+        <TextBox
+            x:Name="CajaBusquedaGlobal"
+            Grid.Row="0"
+            Width="900"
+            MaxLength="80"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            PlaceholderText="Buscar un producto en inventario, vencimientos, registro, órdenes de compra, órdenes de servicio o precios"
+            KeyDown="CajaBusquedaGlobal_KeyDown"
+            TextChanged="CajaBusquedaGlobal_TextChanged" />
+
+        <NavigationView
+            x:Name="NavView"
+            Grid.Row="1"
+            IsBackButtonVisible="Collapsed"
+            IsPaneToggleButtonVisible="False"
+            IsSettingsVisible="True"
+            OpenPaneLength="260"
+            PointerPressed="NavView_PointerPressed"
+            SelectionChanged="NavView_SelectionChanged">
+            <NavigationView.MenuItems>
+                <NavigationViewItem
+                    x:Name="ItemInicio"
+                    Content="Inicio"
+                    IsSelected="True"
+                    Tag="inicio">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE80F;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem x:Name="ItemCatalogo" Content="Inventario" Tag="catalogo">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE8A5;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem x:Name="ItemCaducidad" Content="Vencimientos" Tag="caducidad">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE787;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem x:Name="ItemRegistro" Content="Registro" Tag="registro">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE81C;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem x:Name="ItemHistorialPrecios" Content="Historial de precios" Tag="historial-precios">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE8D4;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem x:Name="ItemOrdenCompra" Content="Orden de compra" Tag="orden-compra">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE7BF;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem x:Name="ItemOrdenServicio" Content="Orden de servicio" Tag="orden-servicio">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE7C3;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem x:Name="ItemProveedores" Content="Proveedores" Tag="proveedores">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE716;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem x:Name="ItemNotificaciones" Content="Notificaciones" Tag="notificaciones">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xEA8F;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem x:Name="ItemMerma" Content="Merma" Tag="merma">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE7BA;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem x:Name="ItemMantenimiento" Content="Mantenimiento" Tag="mantenimiento">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE90F;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItemHeader Content="Áreas operativas" />
+                <NavigationViewItem Content="Insumos Médicos" Tag="clinica">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE95E;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Productos de Venta" Tag="area:44444444-4444-4444-8444-444444444444">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE7BF;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Laboratorio" Tag="area:55555555-5555-4555-8555-555555555555">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE90F;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Materiales y Suministros" Tag="limpieza">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xEA18;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Sin área" Tag="area:none">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE8F1;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItemHeader Content="Recursos humanos" Visibility="Collapsed" />
+                <NavigationViewItem Content="Colaboradores" Tag="rh-colaboradores" Visibility="Collapsed">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE716;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Horarios" Tag="rh-horarios" Visibility="Collapsed">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE121;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Tardanzas" Tag="rh-tardanzas" Visibility="Collapsed">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE916;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Riesgo de colaborador" Tag="rh-riesgo" Visibility="Collapsed">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE7BA;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Faltas" Tag="rh-faltas" Visibility="Collapsed">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE8B7;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Faltas justificadas" Tag="rh-faltas-justificadas" Visibility="Collapsed">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE73E;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItemHeader Content="Personal médico" Visibility="Collapsed" />
+                <NavigationViewItem x:Name="ItemRecetas" Content="Recetas" Tag="recetas" Visibility="Collapsed">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE8A1;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItemHeader Content="Área logística" />
+                <NavigationViewItem x:Name="ItemEtiquetas" Content="Generador de etiquetas" Tag="etiquetas">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE71B;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItemHeader Content="Dashboards" Visibility="Collapsed" />
+                <NavigationViewItem
+                    x:Name="ItemDashboards"
+                    Content="Dashboards"
+                    SelectsOnInvoked="False"
+                    Tag="dashboards"
+                    Visibility="Collapsed">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE9D9;" />
+                    </NavigationViewItem.Icon>
+                    <NavigationViewItem.MenuItems>
+                        <NavigationViewItem Content="REPORTE DE EVALUACIÓN DE ÁREAS IDERMA" Tag="dash-reporte">
+                            <NavigationViewItem.Icon>
+                                <FontIcon Glyph="&#xE9D2;" />
+                            </NavigationViewItem.Icon>
+                        </NavigationViewItem>
+                        <NavigationViewItem Content="INVENTARIO IDERMA" Tag="dash-inventario">
+                            <NavigationViewItem.Icon>
+                                <FontIcon Glyph="&#xE14C;" />
+                            </NavigationViewItem.Icon>
+                        </NavigationViewItem>
+                    </NavigationViewItem.MenuItems>
+                </NavigationViewItem>
+                <NavigationViewItem x:Name="ItemAcerca" Content="Acerca de" Tag="acerca">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE946;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+            </NavigationView.MenuItems>
+            <Grid>
+                <Frame x:Name="NavFrame" />
+                <Border
+                    x:Name="AnclaTour"
+                    Width="24"
+                    Height="24"
+                    Margin="28,20,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Background="Transparent"
+                    IsHitTestVisible="False" />
+            </Grid>
+        </NavigationView>
+
+        <TeachingTip
+            x:Name="TipTour"
+            Grid.RowSpan="2"
+            Title="Ayuda"
+            IsLightDismissEnabled="False"
+            PreferredPlacement="Bottom"
+            ActionButtonClick="TipTour_ActionButtonClick"
+            CloseButtonClick="TipTour_CloseButtonClick">
+            <TeachingTip.IconSource>
+                <FontIconSource Glyph="&#xE897;" />
+            </TeachingTip.IconSource>
+        </TeachingTip>
+
+        <Popup
+            x:Name="PopupBusquedaGlobal"
+            ShouldConstrainToRootBounds="True"
+            IsLightDismissEnabled="False">
+            <Border
+                x:Name="PanelBusquedaGlobal"
+                Width="520"
+                MaxHeight="520"
+                Padding="6"
+                CornerRadius="8"
+                BorderThickness="1"
+                Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                <ListView
+                    x:Name="ListaBusquedaGlobal"
+                    IsItemClickEnabled="True"
+                    IsTabStop="False"
+                    SelectionMode="None"
+                    GettingFocus="ListaBusquedaGlobal_GettingFocus"
+                    ItemClick="ListaBusquedaGlobal_ItemClick">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Padding="4,6" Spacing="1">
+                                <TextBlock FontWeight="SemiBold" Text="{Binding Titulo}" TextTrimming="CharacterEllipsis" />
+                                <TextBlock
+                                    FontSize="12"
+                                    Opacity="0.72"
+                                    Text="{Binding Subtitulo}"
+                                    TextTrimming="CharacterEllipsis" />
+                                <TextBlock
+                                    FontSize="11"
+                                    Opacity="0.5"
+                                    Text="{Binding Categoria}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Border>
+        </Popup>
+    </Grid>
+</Window>

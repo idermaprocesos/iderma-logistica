@@ -1,0 +1,738 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="IdermaFichas.Pages.AreaPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:IdermaFichas.Models"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <DataTemplate x:Key="CanalDatoPlantilla">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <Image
+                    Width="18"
+                    Height="18"
+                    Source="{Binding Icono}"
+                    Stretch="Uniform" />
+                <TextBlock VerticalAlignment="Center" Text="{Binding Titulo}" />
+            </StackPanel>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid Padding="24,16,24,16" RowSpacing="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid ColumnSpacing="16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Spacing="4">
+                <TextBlock x:Name="TituloArea" Style="{StaticResource TituloPaginaStyle}" />
+                <TextBlock x:Name="DescripcionArea" Style="{StaticResource SubtituloPaginaStyle}" />
+            </StackPanel>
+            <CommandBar
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                Background="Transparent"
+                DefaultLabelPosition="Right"
+                OverflowButtonVisibility="Auto">
+                <AppBarButton
+                    Icon="Save"
+                    Label="Ficha"
+                    Click="ExportarFichaLista_Click"
+                    ToolTipService.ToolTip="Exportar ficha (PDF/Excel)" />
+                <AppBarButton
+                    Icon="Copy"
+                    Label="Selección"
+                    Click="ExportarConsolidado_Click"
+                    ToolTipService.ToolTip="Exportar seleccionadas (PDF/Excel)" />
+                <AppBarButton
+                    Icon="OpenFile"
+                    Label="Importar"
+                    Click="ImportarExcel_Click"
+                    ToolTipService.ToolTip="Importar Excel" />
+                <AppBarButton
+                    x:Name="BotonMoverArea"
+                    Icon="MoveToFolder"
+                    Label="Área"
+                    ToolTipService.ToolTip="Mover el producto o la selección a otra área">
+                    <AppBarButton.Flyout>
+                        <MenuFlyout Opening="MenuMoverArea_Opening" />
+                    </AppBarButton.Flyout>
+                </AppBarButton>
+                <AppBarButton
+                    Icon="Add"
+                    Label="Nueva"
+                    Click="NuevaFicha_Click"
+                    ToolTipService.ToolTip="Nueva ficha" />
+            </CommandBar>
+        </Grid>
+
+        <Grid Grid.Row="1" ColumnSpacing="16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="460" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Grid RowSpacing="8">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <TextBox
+                    x:Name="CajaBusqueda"
+                    PlaceholderText="Buscar por nombre, código, categoría o fabricante"
+                    TextChanged="CajaBusqueda_TextChanged" />
+                <ComboBox
+                    x:Name="ComboOrden"
+                    Grid.Row="1"
+                    HorizontalAlignment="Stretch"
+                    SelectionChanged="ComboOrden_SelectionChanged" />
+                <Grid Grid.Row="2" ColumnSpacing="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <ToggleButton
+                        x:Name="BotonModoSeleccionar"
+                        HorizontalAlignment="Stretch"
+                        Click="ModoSeleccionar_Click"
+                        ToolTipService.ToolTip="Con el modo activo, el clic marca productos y no abre la ficha. Ctrl izquierdo añade o quita uno. Mayús marca un rango.">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon FontSize="14" Glyph="&#xE8B3;" />
+                            <TextBlock x:Name="TextoModoSeleccionar" Text="Seleccionar productos" />
+                        </StackPanel>
+                    </ToggleButton>
+                    <DropDownButton
+                        Grid.Column="1"
+                        VerticalAlignment="Stretch"
+                        ToolTipService.ToolTip="Marca o desmarca la lista visible: todas, ninguna, cruzada o armonía.">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon FontSize="14" Glyph="&#xE8A5;" />
+                            <TextBlock Text="Marcar lista" />
+                        </StackPanel>
+                        <DropDownButton.Flyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem Click="SeleccionarTodas_Click" Text="Seleccionar todas" />
+                                <MenuFlyoutItem Click="DeseleccionarTodas_Click" Text="Deseleccionar todas" />
+                                <MenuFlyoutSeparator />
+                                <MenuFlyoutItem Click="SeleccionarCruzada_Click" Text="Selección cruzada (una sí, una no)" />
+                                <MenuFlyoutItem Click="SeleccionarArmonia_Click" Text="Selección armonía (dos sí, una no)" />
+                            </MenuFlyout>
+                        </DropDownButton.Flyout>
+                    </DropDownButton>
+                    <TextBlock
+                        x:Name="AyudaSeleccion"
+                        Grid.Column="2"
+                        VerticalAlignment="Center"
+                        Opacity="0.7"
+                        Text="Ctrl · Mayús" />
+                </Grid>
+                <ListView
+                    x:Name="ListaFichas"
+                    Grid.Row="3"
+                    KeyDown="ListaFichas_KeyDown"
+                    SelectionChanged="ListaFichas_SelectionChanged">
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsStackPanel />
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            <Setter Property="Padding" Value="4,4,8,4" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="models:FichaListaItem">
+                            <Grid ColumnSpacing="6" Padding="0,4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="28" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <CheckBox
+                                    MinWidth="32"
+                                    MinHeight="32"
+                                    Padding="4"
+                                    Width="32"
+                                    VerticalAlignment="Center"
+                                    Click="MarcaFicha_Click"
+                                    Tapped="MarcaFicha_Tapped"
+                                    IsChecked="{x:Bind EstaMarcada, Mode=TwoWay}"
+                                    Tag="{x:Bind Ficha.Id}" />
+                                <StackPanel Grid.Column="1" Spacing="2">
+                                    <TextBlock FontWeight="SemiBold" Text="{x:Bind Ficha.Nombre}" TextWrapping="Wrap" />
+                                    <TextBlock Opacity="0.7" Text="{x:Bind Ficha.Resumen}" TextWrapping="Wrap" />
+                                    <TextBlock Opacity="0.55" Text="{x:Bind Ficha.Fabricante}" TextWrapping="Wrap" />
+                                    <TextBlock Opacity="0.7" Text="{x:Bind Ficha.EstadoCaducidadTexto}" />
+                                </StackPanel>
+                                <Button
+                                    Grid.Column="2"
+                                    VerticalAlignment="Top"
+                                    Click="ExportarFila_Click"
+                                    Padding="8,6"
+                                    Tag="{x:Bind Ficha.Id}"
+                                    ToolTipService.ToolTip="Exportar esta ficha en PDF o Excel">
+                                    <FontIcon FontSize="14" Glyph="&#xEDE1;" />
+                                </Button>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Grid>
+
+            <Grid x:Name="PanelEditor" Grid.Column="1">
+                <StackPanel
+                    x:Name="EstadoVacio"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Spacing="10">
+                    <FontIcon FontSize="40" Glyph="&#xE8A5;" Opacity="0.5" />
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        Opacity="0.7"
+                        Text="Seleccione una ficha o cree una nueva"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+
+                <Grid x:Name="ContenedorFormulario" Visibility="Collapsed" RowSpacing="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <InfoBar
+                        x:Name="BarraEstado"
+                        IsClosable="True"
+                        IsOpen="False">
+                        <InfoBar.ActionButton>
+                            <Button
+                                x:Name="BotonGuardarAlerta"
+                                Click="Guardar_Click"
+                                Content="Guardar ahora"
+                                Visibility="Collapsed" />
+                        </InfoBar.ActionButton>
+                    </InfoBar>
+
+                    <Pivot x:Name="Formulario" Grid.Row="1">
+                        <PivotItem Header="Ficha">
+                            <ScrollViewer>
+                                <StackPanel Padding="4,8,16,16" Spacing="8">
+                                    <TextBlock
+                                        Opacity="0.72"
+                                        Text="Identificación, datos técnicos y uso del producto. El código tiene como máximo 10 caracteres."
+                                        TextWrapping="Wrap" />
+                                    <Grid ColumnSpacing="12" RowSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid Grid.ColumnSpan="2" ColumnSpacing="12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="118" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="Código" />
+                                        <TextBlock
+                                            Grid.Column="2"
+                                            Style="{StaticResource EtiquetaCampoStyle}"
+                                            Text="Categoría" />
+                                        <TextBox
+                                            x:Name="CajaCodigo"
+                                            Grid.Row="1"
+                                            MaxLength="10"
+                                            MinHeight="32"
+                                            CharacterCasing="Upper"
+                                            VerticalAlignment="Center"
+                                            Text="{Binding Codigo, Mode=TwoWay}"
+                                            TextChanged="CajaIdentificacion_TextChanged" />
+                                        <Button
+                                            Grid.Row="1"
+                                            Grid.Column="1"
+                                            MinWidth="132"
+                                            MinHeight="32"
+                                            Padding="12,0"
+                                            VerticalAlignment="Center"
+                                            Click="SiguienteCodigoLibre_Click"
+                                            Content="Siguiente libre"
+                                            ToolTipService.ToolTip="Revisa la lista de esta área y pone el siguiente código libre (máximo 10 caracteres)." />
+                                        <ComboBox
+                                            x:Name="ComboCategoria"
+                                            Grid.Row="1"
+                                            Grid.Column="2"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Center"
+                                            SelectedItem="{Binding Categoria, Mode=TwoWay}" />
+                                    </Grid>
+                                    <StackPanel Grid.Row="1" Grid.ColumnSpan="2">
+                                        <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="Nombre del material" />
+                                        <TextBox
+                                            x:Name="CajaNombre"
+                                            AcceptsReturn="True"
+                                            MinHeight="56"
+                                            CharacterCasing="Upper"
+                                            Text="{Binding Nombre, Mode=TwoWay}"
+                                            TextChanged="CajaIdentificacion_TextChanged"
+                                            TextWrapping="Wrap" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Row="2">
+                                        <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="Unidad de medida" />
+                                        <ComboBox
+                                            x:Name="ComboUnidad"
+                                            HorizontalAlignment="Stretch"
+                                            SelectedItem="{Binding UnidadMedida, Mode=TwoWay}" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Row="2" Grid.Column="1">
+                                        <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="Estado físico" />
+                                        <ComboBox
+                                            x:Name="ComboEstadoFisico"
+                                            HorizontalAlignment="Stretch"
+                                            SelectedItem="{Binding EstadoFisico, Mode=TwoWay}" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Row="3">
+                                        <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="Marca" />
+                                        <TextBox Text="{Binding Marca, Mode=TwoWay}" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Row="3" Grid.Column="1">
+                                        <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="Modelo" />
+                                        <TextBox Text="{Binding Modelo, Mode=TwoWay}" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Row="4">
+                                        <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="Normas / certificaciones" />
+                                        <TextBox PlaceholderText="ISO, CE, COFEPRIS, FDA..." Text="{Binding NormasCertificaciones, Mode=TwoWay}" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Row="4" Grid.Column="1">
+                                        <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="Vida útil" />
+                                        <ComboBox
+                                            x:Name="ComboVidaUtil"
+                                            HorizontalAlignment="Stretch"
+                                            SelectedItem="{Binding VidaUtil, Mode=TwoWay}" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Row="5" Grid.ColumnSpan="2">
+                                        <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="Descripción" />
+                                        <TextBox
+                                            AcceptsReturn="True"
+                                            MinHeight="88"
+                                            Text="{Binding Descripcion, Mode=TwoWay}"
+                                            TextWrapping="Wrap" />
+                                    </StackPanel>
+                                    </Grid>
+
+                                    <Grid x:Name="PanelClinica" Margin="0,4,0,0" Visibility="Collapsed">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <ToggleSwitch
+                                            HorizontalAlignment="Center"
+                                            Header="Estéril"
+                                            IsOn="{Binding Esteril, Mode=TwoWay}" />
+                                        <ToggleSwitch
+                                            Grid.Column="1"
+                                            HorizontalAlignment="Center"
+                                            Header="Requiere refrigeración"
+                                            IsOn="{Binding RequiereRefrigeracion, Mode=TwoWay}" />
+                                        <ToggleSwitch
+                                            Grid.Column="2"
+                                            HorizontalAlignment="Center"
+                                            Header="Reutilizable"
+                                            IsOn="{Binding Reutilizable, Mode=TwoWay}" />
+                                    </Grid>
+
+                                    <StackPanel x:Name="PanelOficina" Spacing="12" Visibility="Collapsed">
+                                        <TextBlock
+                                            Opacity="0.72"
+                                            Text="Ubicación, serie y mantenimiento del artículo."
+                                            TextWrapping="Wrap" />
+                                        <Grid ColumnSpacing="12" RowSpacing="12">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <StackPanel>
+                                                <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="Ubicación" />
+                                                <TextBox PlaceholderText="Recepción, archivo, administración..." Text="{Binding Ubicacion, Mode=TwoWay}" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1">
+                                                <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="Número de serie" />
+                                                <TextBox Text="{Binding NumeroSerie, Mode=TwoWay}" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Row="1">
+                                                <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="Responsable" />
+                                                <TextBox Text="{Binding Responsable, Mode=TwoWay}" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Row="1" Grid.Column="1">
+                                                <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="Garantía (meses)" />
+                                                <NumberBox
+                                                    Minimum="0"
+                                                    SmallChange="1"
+                                                    SpinButtonPlacementMode="Compact"
+                                                    Value="{Binding GarantiaMeses, Mode=TwoWay}" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Row="2">
+                                                <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="Voltaje / alimentación" />
+                                                <TextBox Text="{Binding Voltaje, Mode=TwoWay}" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Row="2" Grid.Column="1">
+                                                <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="Periodicidad de mantenimiento" />
+                                                <TextBox Text="{Binding PeriodicidadMantenimiento, Mode=TwoWay}" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Row="3">
+                                                <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="Compatibilidad" />
+                                                <TextBox
+                                                    AcceptsReturn="True"
+                                                    MinHeight="56"
+                                                    Text="{Binding Compatibilidad, Mode=TwoWay}"
+                                                    TextWrapping="Wrap" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Row="3" Grid.Column="1" VerticalAlignment="Top">
+                                                <ToggleSwitch Header="Requiere mantenimiento" IsOn="{Binding RequiereMantenimiento, Mode=TwoWay}" />
+                                            </StackPanel>
+                                        </Grid>
+                                    </StackPanel>
+
+                                    <StackPanel x:Name="PanelLimpieza" Spacing="12" Visibility="Collapsed">
+                                        <TextBlock
+                                            Opacity="0.72"
+                                            Text="Principio activo, dilución y hoja de seguridad."
+                                            TextWrapping="Wrap" />
+                                        <Grid ColumnSpacing="12" RowSpacing="12">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <StackPanel>
+                                                <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="Principio activo" />
+                                                <TextBox Text="{Binding PrincipioActivo, Mode=TwoWay}" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1">
+                                                <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="Concentración" />
+                                                <TextBox PlaceholderText="Ej. 5%, 70%, concentrado" Text="{Binding Concentracion, Mode=TwoWay}" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Row="1">
+                                                <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="pH" />
+                                                <TextBox Text="{Binding Ph, Mode=TwoWay}" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Row="1" Grid.Column="1">
+                                                <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="Tiempo de contacto" />
+                                                <TextBox Text="{Binding TiempoContacto, Mode=TwoWay}" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Row="2">
+                                                <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="Dilución" />
+                                                <TextBox Text="{Binding Dilucion, Mode=TwoWay}" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Row="2" Grid.Column="1">
+                                                <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="Peligrosidad" />
+                                                <ComboBox
+                                                    x:Name="ComboPeligrosidad"
+                                                    HorizontalAlignment="Stretch"
+                                                    SelectedItem="{Binding Peligrosidad, Mode=TwoWay}" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Row="3">
+                                                <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="Hoja de seguridad (SDS)" />
+                                                <TextBox Text="{Binding HojaSeguridad, Mode=TwoWay}" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Row="3" Grid.Column="1">
+                                                <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="EPP requerido" />
+                                                <TextBox Text="{Binding EppRequerido, Mode=TwoWay}" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Row="4" Grid.ColumnSpan="2">
+                                                <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="Superficies de uso" />
+                                                <TextBox
+                                                    AcceptsReturn="True"
+                                                    MinHeight="48"
+                                                    Text="{Binding SuperficiesUso, Mode=TwoWay}"
+                                                    TextWrapping="Wrap" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Row="5">
+                                                <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="Materiales compatibles" />
+                                                <TextBox
+                                                    AcceptsReturn="True"
+                                                    MinHeight="48"
+                                                    Text="{Binding MaterialesCompatibles, Mode=TwoWay}"
+                                                    TextWrapping="Wrap" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Row="5" Grid.Column="1">
+                                                <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="Residuo generado" />
+                                                <TextBox
+                                                    AcceptsReturn="True"
+                                                    MinHeight="48"
+                                                    Text="{Binding ResiduoGenerado, Mode=TwoWay}"
+                                                    TextWrapping="Wrap" />
+                                            </StackPanel>
+                                        </Grid>
+                                    </StackPanel>
+
+                                    <Grid ColumnSpacing="8" RowSpacing="6">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="1.2*" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <TextBlock
+                                            Grid.ColumnSpan="6"
+                                            Style="{StaticResource EtiquetaCampoStyle}"
+                                            Text="Proveedor (teléfonos y web no van en la ficha técnica)" />
+                                        <ComboBox
+                                            x:Name="ComboHistorialProveedor"
+                                            Grid.Row="1"
+                                            Grid.ColumnSpan="5"
+                                            HorizontalAlignment="Stretch"
+                                            DisplayMemberPath="Resumen"
+                                            PlaceholderText="Historial: elija un proveedor para rellenar nombre y datos"
+                                            SelectionChanged="ComboHistorialProveedor_SelectionChanged"
+                                            ToolTipService.ToolTip="Lista de proveedores guardados. Al elegir uno se copian el nombre y los dos datos." />
+                                        <Button
+                                            Grid.Row="1"
+                                            Grid.Column="5"
+                                            MinHeight="32"
+                                            Padding="10,0"
+                                            VerticalAlignment="Stretch"
+                                            Click="BorrarHistorialProveedor_Click"
+                                            Content="Borrar"
+                                            ToolTipService.ToolTip="Quita el proveedor elegido del historial. No borra los productos." />
+                                        <TextBox
+                                            x:Name="CajaProveedor"
+                                            Grid.Row="2"
+                                            MinHeight="32"
+                                            PlaceholderText="Nombre del proveedor"
+                                            Text="{Binding Proveedor, Mode=TwoWay}" />
+                                        <ComboBox
+                                            x:Name="ComboCanalDato1"
+                                            Grid.Row="2"
+                                            Grid.Column="1"
+                                            MinWidth="120"
+                                            MinHeight="32"
+                                            VerticalAlignment="Stretch"
+                                            ItemTemplate="{StaticResource CanalDatoPlantilla}"
+                                            SelectionChanged="ComboCanalDato_SelectionChanged"
+                                            Tag="1"
+                                            ToolTipService.ToolTip="WhatsApp, web, Facebook o Instagram." />
+                                        <TextBox
+                                            x:Name="CajaDatoProveedor1"
+                                            Grid.Row="2"
+                                            Grid.Column="2"
+                                            MinHeight="32"
+                                            PlaceholderText="Dato" />
+                                        <ComboBox
+                                            x:Name="ComboCanalDato2"
+                                            Grid.Row="2"
+                                            Grid.Column="3"
+                                            MinWidth="120"
+                                            MinHeight="32"
+                                            VerticalAlignment="Stretch"
+                                            ItemTemplate="{StaticResource CanalDatoPlantilla}"
+                                            SelectionChanged="ComboCanalDato_SelectionChanged"
+                                            Tag="2"
+                                            ToolTipService.ToolTip="WhatsApp, web, Facebook o Instagram." />
+                                        <TextBox
+                                            x:Name="CajaDatoProveedor2"
+                                            Grid.Row="2"
+                                            Grid.Column="4"
+                                            MinHeight="32"
+                                            PlaceholderText="Dato" />
+                                        <Button
+                                            Grid.Row="2"
+                                            Grid.Column="5"
+                                            MinHeight="32"
+                                            Padding="10,4"
+                                            VerticalAlignment="Stretch"
+                                            Click="GuardarHistorialProveedor_Click"
+                                            ToolTipService.ToolTip="Guarda el nombre y los dos datos en el historial.">
+                                            <TextBlock
+                                                MaxWidth="110"
+                                                FontSize="12"
+                                                Text="Guardar en historial"
+                                                TextAlignment="Center"
+                                                TextWrapping="Wrap" />
+                                        </Button>
+                                    </Grid>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </PivotItem>
+
+                        <PivotItem Header="Procedencia">
+                            <ScrollViewer>
+                                <StackPanel Padding="4,8,16,16" Spacing="8">
+                                    <TextBlock
+                                        Opacity="0.72"
+                                        Text="Origen del material: fabricante, país y lotes con su caducidad."
+                                        TextWrapping="Wrap" />
+                                    <Grid ColumnSpacing="12" RowSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="Fabricante" />
+                                        <TextBox Text="{Binding Fabricante, Mode=TwoWay}" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="País de origen" />
+                                        <ComboBox
+                                            x:Name="ComboPais"
+                                            HorizontalAlignment="Stretch"
+                                            SelectedItem="{Binding PaisOrigen, Mode=TwoWay}" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Row="1">
+                                        <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="Planta / ciudad de origen" />
+                                        <TextBox Text="{Binding PlantaOrigen, Mode=TwoWay}" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Row="1" Grid.Column="1">
+                                        <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="Tipo de origen" />
+                                        <ComboBox
+                                            x:Name="ComboOrigen"
+                                            HorizontalAlignment="Stretch"
+                                            SelectedItem="{Binding TipoOrigen, Mode=TwoWay}" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Row="2">
+                                        <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="Número de factura" />
+                                        <TextBox Text="{Binding NumeroFactura, Mode=TwoWay}" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Row="2" Grid.Column="1">
+                                        <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="Caducidad de referencia" />
+                                        <TextBlock Opacity="0.8" Text="{Binding FechaCaducidadTexto}" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Row="3">
+                                        <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="Fecha de adquisición" />
+                                        <CalendarDatePicker
+                                            HorizontalAlignment="Stretch"
+                                            Date="{Binding FechaAdquisicion, Mode=TwoWay, Converter={StaticResource FechaCalendarioConverter}}" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Row="3" Grid.Column="1">
+                                        <TextBlock Style="{StaticResource EtiquetaCampoStyle}" Text="Registro sanitario" />
+                                        <TextBox PlaceholderText="COFEPRIS, SSA, INVIMA..." Text="{Binding RegistroSanitario, Mode=TwoWay}" />
+                                    </StackPanel>
+                                </Grid>
+                                    <TextBlock
+                                        Margin="0,8,0,0"
+                                        Opacity="0.72"
+                                        Text="Cada lote tiene su cantidad y fecha de caducidad. La existencia del producto es la suma de estos lotes."
+                                        TextWrapping="Wrap" />
+                                    <Button Click="AgregarPartida_Click" Content="Agregar lote / caducidad" />
+                                    <ItemsControl x:Name="ListaPartidas">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate x:DataType="models:PartidaInventario">
+                                                <Grid ColumnSpacing="8" Margin="0,0,0,8">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="140" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBox Header="Lote / partida" Text="{Binding Lote, Mode=TwoWay}" />
+                                                    <CalendarDatePicker
+                                                        Grid.Column="1"
+                                                        Header="Caducidad"
+                                                        HorizontalAlignment="Stretch"
+                                                        Date="{Binding FechaCaducidad, Mode=TwoWay, Converter={StaticResource FechaCalendarioConverter}}" />
+                                                    <NumberBox
+                                                        Grid.Column="2"
+                                                        Header="Cantidad"
+                                                        Minimum="0"
+                                                        SmallChange="1"
+                                                        SpinButtonPlacementMode="Compact"
+                                                        Value="{Binding Cantidad, Mode=TwoWay}" />
+                                                    <Button
+                                                        Grid.Column="3"
+                                                        VerticalAlignment="Bottom"
+                                                        Click="QuitarPartida_Click"
+                                                        Content="Quitar" />
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <TextBlock
+                                        Margin="0,8,0,0"
+                                        Style="{StaticResource EtiquetaCampoStyle}"
+                                        Text="Notas" />
+                                    <TextBox
+                                        AcceptsReturn="True"
+                                        MinHeight="120"
+                                        PlaceholderText="Observaciones de la ficha"
+                                        Text="{Binding Observaciones, Mode=TwoWay}"
+                                        TextWrapping="Wrap" />
+                                </StackPanel>
+                            </ScrollViewer>
+                        </PivotItem>
+                    </Pivot>
+
+                    <Grid Grid.Row="2" ColumnSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Button
+                            Click="Guardar_Click"
+                            Content="Guardar ficha"
+                            Style="{StaticResource AccentButtonStyle}" />
+                        <Button Grid.Column="1" Click="ExportarFicha_Click" Content="Exportar esta ficha (PDF/Excel)" />
+                        <Button Grid.Column="2" Click="Cancelar_Click" Content="Descartar cambios" />
+                        <Button
+                            Grid.Column="4"
+                            Click="Eliminar_Click"
+                            Content="Eliminar" />
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Grid>
+</Page>

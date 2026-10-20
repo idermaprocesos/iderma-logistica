@@ -1,0 +1,72 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+  <Package
+    Name="Iderma Capilar App"
+    Manufacturer="Piero Zavala Ayala"
+    Version="15.0.5"
+    Language="1034"
+    UpgradeCode="b7e4c9a1-3f82-4d11-9e6a-8c2f1d0b4a77"
+    Scope="perMachine">
+    <SummaryInformation Description="Iderma Capilar App — fichas técnicas, inventario y etiquetas" />
+
+    <!-- Reemplaza versiones anteriores del programa. Los datos y copias en %LOCALAPPDATA%\IdermaCapilar no forman parte del MSI. -->
+    <MajorUpgrade
+      AllowSameVersionUpgrades="yes"
+      Schedule="afterInstallInitialize"
+      DowngradeErrorMessage="!(loc.DowngradeError)" />
+    <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
+
+    <Launch
+      Condition="Installed OR VersionNT64"
+      Message="!(loc.OsRequirement)" />
+
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="Iderma Capilar App" />
+    </StandardDirectory>
+
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="ApplicationProgramsFolder" Name="Iderma Capilar App" />
+    </StandardDirectory>
+
+    <StandardDirectory Id="DesktopFolder" />
+
+    <Icon Id="AppIcon" SourceFile="!(bindpath.Payload)\img\logo.ico" />
+    <Property Id="ARPPRODUCTICON" Value="AppIcon" />
+    <Property Id="ARPHELPLINK" Value="https://apps.microsoft.com/detail/9MTRQHPT201N" />
+
+    <WixVariable Id="WixUILicenseRtf" Value="License.es-ES.rtf" />
+    <WixVariable Id="WixUIBannerBmp" Value="banner.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="dialog.bmp" />
+
+    <Component Id="StartMenuShortcut" Directory="ApplicationProgramsFolder" Guid="c8d1e2f3-4a5b-4678-9012-3456789abcde">
+      <Shortcut
+        Id="StartMenuShortcut"
+        Name="Iderma Capilar App"
+        Description="Iderma Capilar App"
+        Target="[INSTALLFOLDER]Iderma.Launcher\Iderma.Launcher.exe"
+        WorkingDirectory="INSTALLFOLDER"
+        Icon="AppIcon" />
+      <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall" />
+      <RegistryValue Root="HKCU" Key="Software\IDERMA\IdermaCapilarApp" Name="StartMenu" Type="integer" Value="1" KeyPath="yes" />
+    </Component>
+
+    <Component Id="DesktopShortcut" Directory="DesktopFolder" Guid="d9e2f3a4-5b6c-4789-0123-456789abcdef">
+      <Shortcut
+        Id="DesktopShortcut"
+        Name="Iderma Capilar App"
+        Description="Iderma Capilar App"
+        Target="[INSTALLFOLDER]Iderma.Launcher\Iderma.Launcher.exe"
+        WorkingDirectory="INSTALLFOLDER"
+        Icon="AppIcon" />
+      <RegistryValue Root="HKCU" Key="Software\IDERMA\IdermaCapilarApp" Name="Desktop" Type="integer" Value="1" KeyPath="yes" />
+    </Component>
+
+    <Feature Id="Main" Title="Iderma Capilar App" Level="1">
+      <Files Directory="INSTALLFOLDER" Include="!(bindpath.Payload)\**" />
+      <ComponentRef Id="StartMenuShortcut" />
+      <ComponentRef Id="DesktopShortcut" />
+    </Feature>
+
+    <ui:WixUI Id="WixUI_Minimal" />
+  </Package>
+</Wix>

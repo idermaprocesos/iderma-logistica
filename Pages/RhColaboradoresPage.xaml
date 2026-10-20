@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="IdermaFichas.Pages.RhColaboradoresPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:models="using:IdermaFichas.Models">
+
+    <Grid Padding="24,16,24,16" RowSpacing="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <StackPanel Spacing="4">
+                <TextBlock Style="{StaticResource TituloPaginaStyle}" Text="Colaboradores" />
+                <TextBlock
+                    Style="{StaticResource SubtituloPaginaStyle}"
+                    Text="Plantilla de personal. Los horarios, tardanzas, faltas y riesgos se asocian a cada colaborador." />
+            </StackPanel>
+            <Button
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Click="Nuevo_Click"
+                Style="{StaticResource AccentButtonStyle}"
+                Content="Nuevo colaborador" />
+        </Grid>
+
+        <Grid Grid.Row="1" ColumnSpacing="16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="340" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <ListView
+                x:Name="Lista"
+                SelectionChanged="Lista_SelectionChanged">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="models:Colaborador">
+                        <StackPanel Padding="0,8" Spacing="2">
+                            <TextBlock FontWeight="SemiBold" Text="{x:Bind Nombre}" />
+                            <TextBlock Opacity="0.7" Text="{x:Bind Resumen}" />
+                            <TextBlock Opacity="0.55" Text="{x:Bind EstadoTexto}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <ScrollViewer Grid.Column="1">
+                <StackPanel x:Name="Formulario" Spacing="12" Visibility="Collapsed">
+                    <InfoBar x:Name="Barra" IsClosable="True" IsOpen="False" />
+                    <TextBox x:Name="CajaNombre" Header="Nombre" />
+                    <Grid ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="CajaPuesto" Header="Puesto" />
+                        <TextBox x:Name="CajaArea" Grid.Column="1" Header="Área" />
+                    </Grid>
+                    <Grid ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="CajaTelefono" Header="Teléfono" />
+                        <DatePicker x:Name="FechaIngreso" Grid.Column="1" Header="Fecha de ingreso" />
+                    </Grid>
+                    <ToggleSwitch x:Name="SwitchActivo" Header="Activo" OnContent="Sí" OffContent="No" />
+                    <TextBox x:Name="CajaNotas" Header="Notas" AcceptsReturn="True" MinHeight="80" TextWrapping="Wrap" />
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Button Click="Guardar_Click" Content="Guardar" Style="{StaticResource AccentButtonStyle}" />
+                        <Button Click="Borrar_Click" Content="Eliminar" />
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</Page>

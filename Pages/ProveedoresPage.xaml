@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="IdermaFichas.Pages.ProveedoresPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:IdermaFichas.Pages">
+
+    <Page.Resources>
+        <DataTemplate x:Key="CanalDatoPlantilla">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <Image
+                    Width="18"
+                    Height="18"
+                    Source="{Binding Icono}"
+                    Stretch="Uniform" />
+                <TextBlock VerticalAlignment="Center" Text="{Binding Titulo}" />
+            </StackPanel>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid Padding="24,8,24,12" RowSpacing="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid ColumnSpacing="12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Spacing="4">
+                <TextBlock x:Name="TituloPagina" Style="{StaticResource TituloPaginaStyle}" Text="Proveedores" />
+                <TextBlock
+                    Style="{StaticResource SubtituloPaginaStyle}"
+                    Text="RUC, razón social, tiempo de entrega y acuerdo de compra mínima, junto con WhatsApp, web, redes y notas. Califique y filtre por el mes o el año en que se agregaron." />
+                <TextBlock
+                    x:Name="TextoConteo"
+                    Opacity="0.72"
+                    Text="0 proveedores" />
+            </StackPanel>
+            <StackPanel
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                Orientation="Horizontal"
+                Spacing="8">
+                <Button Click="TraerProductos_Click" Content="Actualizar desde fichas" />
+                <Button
+                    Click="Agregar_Click"
+                    Content="Agregar proveedor"
+                    Style="{StaticResource AccentButtonStyle}" />
+            </StackPanel>
+        </Grid>
+
+        <StackPanel Grid.Row="1" Spacing="8">
+            <Grid ColumnSpacing="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="220" />
+                    <ColumnDefinition Width="220" />
+                </Grid.ColumnDefinitions>
+                <TextBox
+                    x:Name="CajaBusqueda"
+                    MinHeight="32"
+                    MaxHeight="32"
+                    VerticalAlignment="Center"
+                    PlaceholderText="Buscar por nombre, RUC, empresa, red, web o nota"
+                    TextChanged="CajaBusqueda_TextChanged" />
+                <ComboBox
+                    x:Name="ComboCalificacion"
+                    Grid.Column="1"
+                    MinHeight="32"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    PlaceholderText="Calificación"
+                    SelectionChanged="Filtro_Changed" />
+                <ComboBox
+                    x:Name="ComboAnio"
+                    Grid.Column="2"
+                    MinHeight="32"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    PlaceholderText="Año"
+                    SelectionChanged="Periodo_Changed" />
+            </Grid>
+            <Grid ColumnSpacing="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock VerticalAlignment="Center" Opacity="0.75" Text="Mes de alta:" />
+                <ScrollViewer
+                    Grid.Column="1"
+                    HorizontalScrollBarVisibility="Auto"
+                    VerticalScrollBarVisibility="Disabled">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <StackPanel x:Name="PanelMeses" Orientation="Horizontal" Spacing="4" />
+                        <Button
+                            VerticalAlignment="Center"
+                            Click="TodosMeses_Click"
+                            Content="Todos los meses" />
+                        <ToggleButton
+                            x:Name="ChipUltimos3"
+                            VerticalAlignment="Center"
+                            Click="AtajoMeses_Click"
+                            Content="Últimos 3 meses"
+                            Tag="3" />
+                        <ToggleButton
+                            x:Name="ChipUltimos6"
+                            VerticalAlignment="Center"
+                            Click="AtajoMeses_Click"
+                            Content="Últimos 6 meses"
+                            Tag="6" />
+                        <ToggleButton
+                            x:Name="ChipUltimos12"
+                            VerticalAlignment="Center"
+                            Click="AtajoMeses_Click"
+                            Content="Último año"
+                            Tag="12" />
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </StackPanel>
+
+        <InfoBar
+            x:Name="Barra"
+            Grid.Row="2"
+            IsClosable="True"
+            IsOpen="False" />
+
+        <Grid Grid.Row="3">
+            <ListView
+                x:Name="Lista"
+                SelectionMode="None">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel />
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="Padding" Value="0,0,0,4" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="local:ProveedorFila">
+                        <Border Padding="10,6" Style="{StaticResource TarjetaKpiStyle}">
+                            <StackPanel Spacing="2">
+                                <Grid ColumnSpacing="8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        FontWeight="SemiBold"
+                                        Text="{x:Bind Nombre}"
+                                        TextTrimming="CharacterEllipsis" />
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        VerticalAlignment="Center"
+                                        FontSize="12"
+                                        Opacity="0.65"
+                                        Text="{x:Bind FechaTexto}" />
+                                </Grid>
+                                <TextBlock
+                                    FontSize="12"
+                                    Opacity="0.65"
+                                    Text="{x:Bind UsoTexto}"
+                                    TextTrimming="CharacterEllipsis" />
+                                <TextBlock
+                                    FontSize="12"
+                                    Text="{x:Bind EmpresaTexto}"
+                                    TextTrimming="CharacterEllipsis" />
+                                <TextBlock
+                                    FontSize="12"
+                                    Opacity="0.85"
+                                    Text="{x:Bind GestionTexto}"
+                                    TextTrimming="CharacterEllipsis" />
+                                <Grid ColumnSpacing="6" Margin="0,2,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="140" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <ComboBox
+                                        MinHeight="28"
+                                        Padding="8,2"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Center"
+                                        ItemTemplate="{StaticResource CanalDatoPlantilla}"
+                                        ItemsSource="{x:Bind Canales}"
+                                        Loaded="Canal1_Loaded"
+                                        SelectionChanged="Canal1_SelectionChanged"
+                                        Tag="{x:Bind IdTexto}" />
+                                    <TextBox
+                                        Grid.Column="1"
+                                        MinHeight="28"
+                                        Padding="8,2"
+                                        VerticalAlignment="Center"
+                                        LostFocus="Dato1_LostFocus"
+                                        PlaceholderText="{x:Bind Placeholder1}"
+                                        Tag="{x:Bind IdTexto}"
+                                        Text="{x:Bind Dato1, Mode=OneTime}" />
+                                    <Button
+                                        Grid.Column="2"
+                                        MinHeight="28"
+                                        Padding="8,2"
+                                        VerticalAlignment="Center"
+                                        Click="AbrirCanal_Click"
+                                        Content="Abrir" />
+                                </Grid>
+                                <Grid ColumnSpacing="6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="140" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <ComboBox
+                                        MinHeight="28"
+                                        Padding="8,2"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Center"
+                                        ItemTemplate="{StaticResource CanalDatoPlantilla}"
+                                        ItemsSource="{x:Bind Canales}"
+                                        Loaded="Canal2_Loaded"
+                                        SelectionChanged="Canal2_SelectionChanged"
+                                        Tag="{x:Bind IdTexto}" />
+                                    <TextBox
+                                        Grid.Column="1"
+                                        MinHeight="28"
+                                        Padding="8,2"
+                                        VerticalAlignment="Center"
+                                        LostFocus="Dato2_LostFocus"
+                                        PlaceholderText="{x:Bind Placeholder2}"
+                                        Tag="{x:Bind IdTexto}"
+                                        Text="{x:Bind Dato2, Mode=OneTime}" />
+                                    <Button
+                                        Grid.Column="2"
+                                        MinHeight="28"
+                                        Padding="8,2"
+                                        VerticalAlignment="Center"
+                                        Click="AbrirCanal_Click"
+                                        Content="Abrir" />
+                                </Grid>
+                                <Grid ColumnSpacing="6" Margin="0,2,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="220" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <ComboBox
+                                        MinHeight="28"
+                                        Padding="8,2"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Center"
+                                        ItemsSource="{x:Bind Calificaciones}"
+                                        Loaded="ComboCalificacion_Loaded"
+                                        PlaceholderText="Calificación"
+                                        SelectionChanged="Calificacion_SelectionChanged"
+                                        Tag="{x:Bind IdTexto}" />
+                                    <TextBox
+                                        Grid.Column="1"
+                                        MinHeight="28"
+                                        Padding="8,2"
+                                        VerticalAlignment="Center"
+                                        LostFocus="Notas_LostFocus"
+                                        PlaceholderText="Notas"
+                                        Tag="{x:Bind IdTexto}"
+                                        Text="{x:Bind Notas, Mode=OneTime}" />
+                                    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6">
+                                        <Button
+                                            MinHeight="28"
+                                            Padding="8,2"
+                                            Click="Editar_Click"
+                                            Content="Editar"
+                                            Tag="{x:Bind IdTexto}" />
+                                        <Button
+                                            MinHeight="28"
+                                            Padding="8,2"
+                                            Click="Eliminar_Click"
+                                            Content="Eliminar"
+                                            Tag="{x:Bind IdTexto}" />
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <TextBlock
+                x:Name="TextoVacio"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Opacity="0.72"
+                Text="Aún no hay proveedores."
+                TextAlignment="Center"
+                TextWrapping="Wrap" />
+        </Grid>
+    </Grid>
+</Page>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="IdermaFichas.Pages.OrdenServicioWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:model="using:IdermaFichas.Models">
+
+    <Grid Padding="20,16" RowSpacing="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid ColumnSpacing="12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Button VerticalAlignment="Center" Click="Volver_Click" Content="Volver" />
+            <StackPanel Grid.Column="1" Spacing="2">
+                <TextBlock FontSize="20" FontWeight="SemiBold" Text="Orden de servicio" />
+                <TextBlock Opacity="0.72" Text="FO0LOG016 · Ampliación de contratos por meses. El monto mensual se toma con IGV incluido." TextWrapping="Wrap" />
+            </StackPanel>
+            <TextBlock x:Name="ResumenLineas" Grid.Column="2" VerticalAlignment="Center" FontWeight="SemiBold" Text="0 contratos" />
+        </Grid>
+
+        <InfoBar x:Name="Aviso" Grid.Row="1" IsClosable="True" IsOpen="False" />
+
+        <Grid Grid.Row="2" ColumnSpacing="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="1.3*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBox x:Name="CajaMes" Header="Mes / Año" />
+            <DatePicker x:Name="FechaElaboracion" Grid.Column="1" HorizontalAlignment="Stretch" Header="Fecha de elaboración" />
+            <TextBox x:Name="CajaCobertura" Grid.Column="2" Header="Período de cobertura" />
+            <ComboBox x:Name="ComboEstado" Grid.Column="3" HorizontalAlignment="Stretch" Header="Estado" />
+            <TextBox x:Name="CajaElaborado" Grid.Row="1" Grid.ColumnSpan="2" Header="Elaborado por" />
+            <TextBox x:Name="CajaRevisado" Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Header="Revisado por" />
+        </Grid>
+
+        <AutoSuggestBox
+            x:Name="BuscarProveedor"
+            Grid.Row="3"
+            PlaceholderText="Agregar proveedor: nombre o RUC"
+            QueryIcon="Find"
+            SuggestionChosen="BuscarProveedor_SuggestionChosen"
+            TextChanged="BuscarProveedor_TextChanged" />
+
+        <ListView x:Name="Lista" Grid.Row="4" SelectionMode="None">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="model:LineaOrdenServicio">
+                    <Grid Padding="4,8" ColumnSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" MinWidth="160" />
+                            <ColumnDefinition Width="110" />
+                            <ColumnDefinition Width="180" />
+                            <ColumnDefinition Width="90" />
+                            <ColumnDefinition Width="120" />
+                            <ColumnDefinition Width="110" />
+                            <ColumnDefinition Width="110" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Spacing="2">
+                            <TextBlock FontWeight="SemiBold" Text="{x:Bind Proveedor}" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Opacity="0.7" Text="{x:Bind Contrato}" TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                        <TextBlock Grid.Column="1" VerticalAlignment="Bottom" Text="{x:Bind TextoRuc}" />
+                        <TextBox Grid.Column="2" Header="Servicio" Text="{x:Bind Servicio, Mode=TwoWay}" />
+                        <NumberBox Grid.Column="3" Header="Meses" Minimum="1" Maximum="36" SpinButtonPlacementMode="Compact" Value="{x:Bind Meses, Mode=TwoWay}" />
+                        <NumberBox Grid.Column="4" Header="Mensual con IGV" Minimum="0" SpinButtonPlacementMode="Compact" Value="{x:Bind MontoMensual, Mode=TwoWay}" />
+                        <TextBlock Grid.Column="5" VerticalAlignment="Bottom" Text="{x:Bind TextoNueva, Mode=OneWay}" />
+                        <TextBlock Grid.Column="6" VerticalAlignment="Bottom" FontWeight="SemiBold" Text="{x:Bind TextoTotal, Mode=OneWay}" />
+                        <Button Grid.Column="7" VerticalAlignment="Bottom" Click="Quitar_Click" Content="Quitar" Tag="{x:Bind Id}" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <Grid Grid.Row="5" ColumnSpacing="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock x:Name="TotalGeneral" VerticalAlignment="Center" FontSize="16" FontWeight="SemiBold" Text="Total con IGV: —" />
+            <Button Grid.Column="1" Click="Guardar_Click" Content="Guardar" />
+            <Button Grid.Column="2" Click="Pdf_Click" Content="Imprimir PDF" Style="{StaticResource AccentButtonStyle}" />
+            <Button Grid.Column="3" Click="Excel_Click" Content="Exportar Excel" />
+        </Grid>
+    </Grid>
+</Page>

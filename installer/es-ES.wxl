@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization xmlns="http://wixtoolset.org/schemas/v4/wxl" Culture="es-ES" Codepage="1252" Language="1034">
+  <String Id="DowngradeError" Value="Ya hay una versión más reciente de Iderma Capilar App instalada." />
+  <String Id="OsRequirement" Value="Iderma Capilar App requiere Windows 10 de 64 bits (versión 1809 o posterior) o Windows 11." />
+
+  <String Id="Caption" Value="Instalador — [WixBundleName]" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="Author" Value="Elaborado por: Piero Zavala Ayala" />
+  <String Id="CheckingForUpdatesLabel" Value="Buscando actualizaciones" />
+  <String Id="UpdateButton" Value="&amp;Actualizar a la versión [WixStdBAUpdateAvailable]" />
+  <String Id="InstallVersion" Value="Versión [WixBundleVersion]" />
+  <String Id="ConfirmCancelMessage" Value="¿Seguro que desea cancelar?" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Versión anterior" />
+  <String Id="HelpHeader" Value="Ayuda de la instalación" />
+  <String Id="HelpText" Value="/install | /repair | /uninstall | /layout [directorio] - instala, repara, desinstala o&#xA;   crea una copia local completa del paquete en el directorio. Instalar es la opción predeterminada.&#xA;&#xA;/passive | /quiet -  muestra una interfaz mínima sin preguntas o no muestra interfaz&#xA;   ni preguntas. De forma predeterminada se muestra la interfaz y todas las preguntas.&#xA;&#xA;/norestart   - no intenta reiniciar. De forma predeterminada se pregunta antes de reiniciar.&#xA;/log log.txt - registra en un archivo concreto. De forma predeterminada se crea un registro en %TEMP%." />
+  <String Id="HelpCloseButton" Value="&amp;Cerrar" />
+  <String Id="InstallAcceptCheckbox" Value="&amp;Acepto los términos de la licencia" />
+  <String Id="InstallOptionsButton" Value="&amp;Opciones" />
+  <String Id="InstallInstallButton" Value="&amp;Instalar" />
+  <String Id="InstallCancelButton" Value="&amp;Cancelar" />
+  <String Id="OptionsHeader" Value="Opciones de instalación" />
+  <String Id="OptionsLocationLabel" Value="Ubicación de instalación:" />
+  <String Id="OptionsBrowseButton" Value="&amp;Examinar" />
+  <String Id="OptionsOkButton" Value="&amp;Aceptar" />
+  <String Id="OptionsCancelButton" Value="&amp;Cancelar" />
+  <String Id="ProgressHeader" Value="Progreso de la instalación" />
+  <String Id="ProgressLabel" Value="Procesando:" />
+  <String Id="OverallProgressPackageText" Value="Iniciando..." />
+  <String Id="ProgressCancelButton" Value="&amp;Cancelar" />
+  <String Id="ModifyHeader" Value="Modificar instalación" />
+  <String Id="ModifyRepairButton" Value="&amp;Reparar" />
+  <String Id="ModifyUninstallButton" Value="&amp;Desinstalar" />
+  <String Id="ModifyCancelButton" Value="&amp;Cancelar" />
+  <String Id="SuccessHeader" Value="Instalación correcta" />
+  <String Id="SuccessCacheHeader" Value="Caché completada" />
+  <String Id="SuccessInstallHeader" Value="La instalación se completó correctamente" />
+  <String Id="SuccessLayoutHeader" Value="La copia local se completó correctamente" />
+  <String Id="SuccessModifyHeader" Value="La modificación se completó correctamente" />
+  <String Id="SuccessRepairHeader" Value="La reparación se completó correctamente" />
+  <String Id="SuccessUninstallHeader" Value="La desinstalación se completó correctamente" />
+  <String Id="SuccessUnsafeUninstallHeader" Value="La desinstalación se completó correctamente" />
+  <String Id="SuccessLaunchButton" Value="&amp;Iniciar" />
+  <String Id="SuccessRestartText" Value="Debe reiniciar el equipo antes de usar el programa." />
+  <String Id="SuccessUninstallRestartText" Value="Debe reiniciar el equipo para terminar de quitar el programa." />
+  <String Id="SuccessRestartButton" Value="&amp;Reiniciar" />
+  <String Id="SuccessCloseButton" Value="&amp;Cerrar" />
+  <String Id="FailureHeader" Value="Error en la instalación" />
+  <String Id="FailureCacheHeader" Value="Error al preparar archivos" />
+  <String Id="FailureInstallHeader" Value="Error en la instalación" />
+  <String Id="FailureLayoutHeader" Value="Error al crear la copia local" />
+  <String Id="FailureModifyHeader" Value="Error al modificar" />
+  <String Id="FailureRepairHeader" Value="Error al reparar" />
+  <String Id="FailureUninstallHeader" Value="Error al desinstalar" />
+  <String Id="FailureUnsafeUninstallHeader" Value="Error al desinstalar" />
+  <String Id="FailureHyperlinkLogText" Value="Uno o más problemas impidieron completar la instalación. Corríjalos y vuelva a intentarlo. Para más información, abra el &lt;a href=&quot;#&quot;&gt;archivo de registro&lt;/a&gt;." />
+  <String Id="FailureRestartText" Value="Debe reiniciar el equipo para completar la reversión del programa." />
+  <String Id="FailureRestartButton" Value="&amp;Reiniciar" />
+  <String Id="FailureCloseButton" Value="&amp;Cerrar" />
+  <String Id="FilesInUseTitle" Value="Archivos en uso" />
+  <String Id="FilesInUseLabel" Value="Estas aplicaciones están usando archivos que hay que actualizar:" />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="Cerrar las &amp;aplicaciones." />
+  <String Id="FilesInUseCloseRadioButton" Value="Cerrar las &amp;aplicaciones e intentar reiniciarlas." />
+  <String Id="FilesInUseDontCloseRadioButton" Value="&amp;No cerrar las aplicaciones. Será necesario reiniciar." />
+  <String Id="FilesInUseRetryButton" Value="&amp;Reintentar" />
+  <String Id="FilesInUseIgnoreButton" Value="&amp;Omitir" />
+  <String Id="FilesInUseExitButton" Value="&amp;Salir" />
+</WixLocalization>

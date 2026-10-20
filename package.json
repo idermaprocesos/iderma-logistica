@@ -1,0 +1,18 @@
+{
+  "name": "iderma-capilar-app",
+  "productName": "Iderma Capilar App",
+  "version": "9.0.0",
+  "description": "Iderma Capilar App — paquete Microsoft Store",
+  "scripts": {
+    "dist:msix": "powershell -NoProfile -ExecutionPolicy Bypass -File ./publish-store.ps1"
+  },
+  "build": {
+    "appx": {
+      "identityName": "IDERMA.IdermaCapilarApp",
+      "publisher": "CN=844F6B62-DFC2-4694-AD6B-454BCD5E1ACD",
+      "publisherDisplayName": "IDERMA",
+      "displayName": "Iderma Capilar App",
+      "applicationId": "IdermaCapilarApp"
+    }
+  }
+}

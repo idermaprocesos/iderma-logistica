@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="IdermaFichas.Pages.HistorialPreciosPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:helpers="using:IdermaFichas.Helpers"
+    xmlns:models="using:IdermaFichas.Models"
+    mc:Ignorable="d">
+
+    <Grid Padding="24,16,24,16" ColumnSpacing="16">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="480" />
+        </Grid.ColumnDefinitions>
+
+        <Grid RowSpacing="8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Spacing="4">
+                <TextBlock Style="{StaticResource TituloPaginaStyle}" Text="Historial de precios" />
+                <TextBlock
+                    x:Name="ResumenLista"
+                    Style="{StaticResource SubtituloPaginaStyle}"
+                    Text="Elija un producto para ver y cambiar sus precios." />
+            </StackPanel>
+
+            <helpers:PanelAjuste
+                x:Name="PanelFiltrosChips"
+                Grid.Row="1"
+                EspacioHorizontal="6"
+                EspacioVertical="6" />
+
+            <Grid Grid.Row="2" RowSpacing="6" ColumnSpacing="6">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBox
+                    x:Name="CajaBusqueda"
+                    Grid.ColumnSpan="4"
+                    PlaceholderText="Buscar por código, nombre, categoría, proveedor, ubicación o lote"
+                    TextChanged="Filtros_Changed" />
+                <ComboBox
+                    x:Name="ComboArea"
+                    Grid.Row="1"
+                    HorizontalAlignment="Stretch"
+                    MinWidth="0"
+                    Header="Área"
+                    SelectionChanged="Filtros_Changed" />
+                <ComboBox
+                    x:Name="ComboOrden"
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    HorizontalAlignment="Stretch"
+                    MinWidth="0"
+                    Header="Orden"
+                    SelectionChanged="Filtros_Changed" />
+                <ComboBox
+                    x:Name="ComboStock"
+                    Grid.Row="1"
+                    Grid.Column="2"
+                    HorizontalAlignment="Stretch"
+                    MinWidth="0"
+                    Header="Stock"
+                    SelectionChanged="Filtros_Changed" />
+                <ComboBox
+                    x:Name="ComboCaducidad"
+                    Grid.Row="1"
+                    Grid.Column="3"
+                    HorizontalAlignment="Stretch"
+                    MinWidth="0"
+                    Header="Caducidad"
+                    SelectionChanged="Filtros_Changed" />
+                <ComboBox
+                    x:Name="ComboCategoria"
+                    Grid.Row="2"
+                    HorizontalAlignment="Stretch"
+                    MinWidth="0"
+                    Header="Categoría"
+                    SelectionChanged="Filtros_Changed" />
+                <ComboBox
+                    x:Name="ComboProveedor"
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    HorizontalAlignment="Stretch"
+                    MinWidth="0"
+                    Header="Proveedor"
+                    SelectionChanged="Filtros_Changed" />
+                <ComboBox
+                    x:Name="ComboUbicacion"
+                    Grid.Row="2"
+                    Grid.Column="2"
+                    HorizontalAlignment="Stretch"
+                    MinWidth="0"
+                    Header="Ubicación"
+                    SelectionChanged="Filtros_Changed" />
+                <ComboBox
+                    x:Name="ComboLote"
+                    Grid.Row="2"
+                    Grid.Column="3"
+                    HorizontalAlignment="Stretch"
+                    MinWidth="0"
+                    Header="Lote"
+                    SelectionChanged="Filtros_Changed" />
+            </Grid>
+
+            <ListView
+                x:Name="ListaProductos"
+                Grid.Row="3"
+                IsItemClickEnabled="True"
+                ItemClick="ListaProductos_ItemClick"
+                SelectionMode="Single">
+                <ListView.Header>
+                    <Grid Padding="12,8" ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="88" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="110" />
+                            <ColumnDefinition Width="130" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock FontWeight="SemiBold" Opacity="0.7" Text="Código" />
+                        <TextBlock Grid.Column="1" FontWeight="SemiBold" Opacity="0.7" Text="Material" />
+                        <TextBlock Grid.Column="2" FontWeight="SemiBold" Opacity="0.7" Text="Área" />
+                        <TextBlock Grid.Column="3" FontWeight="SemiBold" Opacity="0.7" Text="Último precio" />
+                    </Grid>
+                </ListView.Header>
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="models:FichaPrecioListaItem">
+                        <Grid Padding="4,10" ColumnSpacing="12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="88" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="110" />
+                                <ColumnDefinition Width="130" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" FontWeight="SemiBold" Text="{x:Bind Ficha.Codigo}" />
+                            <StackPanel Grid.Column="1" Spacing="2">
+                                <TextBlock FontWeight="SemiBold" Text="{x:Bind Ficha.Nombre}" />
+                                <TextBlock Opacity="0.65" Text="{x:Bind Ficha.Resumen}" />
+                            </StackPanel>
+                            <TextBlock Grid.Column="2" VerticalAlignment="Center" Text="{x:Bind Ficha.AreaTitulo}" />
+                            <TextBlock Grid.Column="3" VerticalAlignment="Center" Text="{x:Bind UltimoPrecioTexto}" />
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+
+        <Grid Grid.Column="1" RowSpacing="12">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <StackPanel x:Name="PanelVacio" Spacing="8" VerticalAlignment="Top">
+                <TextBlock Style="{StaticResource TituloPaginaStyle}" Text="Sin producto" FontSize="20" />
+                <TextBlock
+                    Opacity="0.75"
+                    TextWrapping="Wrap"
+                    Text="Seleccione un producto de la lista para ver su historial, agregar un precio o editar uno existente. Puede registrarlo en soles o dólares." />
+            </StackPanel>
+
+            <StackPanel x:Name="PanelProducto" Spacing="6" Visibility="Collapsed">
+                <TextBlock x:Name="TituloProducto" Style="{StaticResource TituloPaginaStyle}" FontSize="20" Text="" />
+                <TextBlock x:Name="SubtituloProducto" Style="{StaticResource SubtituloPaginaStyle}" Text="" />
+                <Button
+                    HorizontalAlignment="Left"
+                    Click="ExportarReporte_Click"
+                    Content="Exportar reporte (PDF/Excel)" />
+            </StackPanel>
+
+            <StackPanel
+                x:Name="PanelFormulario"
+                Grid.Row="1"
+                Spacing="8"
+                Visibility="Collapsed">
+                <TextBlock x:Name="TituloFormulario" FontWeight="SemiBold" Text="Nuevo precio" />
+                <StackPanel Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
+                    <TextBlock
+                        x:Name="TextoPrecioActual"
+                        FontSize="32"
+                        FontWeight="SemiBold"
+                        Text="Sin precio"
+                        TextWrapping="Wrap" />
+                    <TextBlock
+                        x:Name="TextoVariacionPrecio"
+                        VerticalAlignment="Center"
+                        FontSize="20"
+                        FontWeight="SemiBold"
+                        Text="" />
+                </StackPanel>
+                <StackPanel x:Name="PanelPrecioInicial" Spacing="2" Visibility="Collapsed">
+                    <TextBlock FontSize="12" Opacity="0.7" Text="Precio inicial" />
+                    <StackPanel Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
+                        <TextBlock
+                            x:Name="TextoPrecioInicial"
+                            FontSize="22"
+                            FontWeight="SemiBold"
+                            Text=""
+                            TextWrapping="Wrap" />
+                        <TextBlock
+                            x:Name="TextoVariacionInicial"
+                            VerticalAlignment="Center"
+                            FontSize="18"
+                            FontWeight="SemiBold"
+                            Text="" />
+                    </StackPanel>
+                </StackPanel>
+                <DatePicker x:Name="FechaPrecio" Header="Fecha" HorizontalAlignment="Left" />
+                <NumberBox
+                    x:Name="CajaMonto"
+                    Header="Monto"
+                    Minimum="0"
+                    SmallChange="0.1"
+                    LargeChange="1"
+                    SpinButtonPlacementMode="Compact"
+                    PlaceholderText="0.00" />
+                <ComboBox
+                    x:Name="ComboMoneda"
+                    Header="Moneda"
+                    HorizontalAlignment="Stretch" />
+                <TextBox
+                    x:Name="CajaNota"
+                    Header="Nota (opcional)"
+                    PlaceholderText="Factura, proveedor, observación" />
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Button
+                        Click="GuardarPrecio_Click"
+                        Content="Guardar precio"
+                        Style="{StaticResource AccentButtonStyle}" />
+                    <Button Click="CancelarEdicion_Click" Content="Cancelar edición" />
+                </StackPanel>
+                <InfoBar x:Name="AvisoPrecios" IsOpen="False" IsClosable="True" />
+            </StackPanel>
+
+            <ListView
+                x:Name="ListaPrecios"
+                Grid.Row="2"
+                Visibility="Collapsed">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="MinHeight" Value="0" />
+                        <Setter Property="Padding" Value="0" />
+                        <Setter Property="Margin" Value="0" />
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.Header>
+                    <Grid Padding="4,4" ColumnSpacing="6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="78" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="64" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock FontSize="12" FontWeight="SemiBold" Opacity="0.7" Text="Fecha" />
+                        <TextBlock Grid.Column="1" FontSize="12" FontWeight="SemiBold" Opacity="0.7" Text="Precio" />
+                        <TextBlock Grid.Column="2" FontSize="12" FontWeight="SemiBold" Opacity="0.7" Text="Var." />
+                        <TextBlock Grid.Column="3" FontSize="12" FontWeight="SemiBold" Opacity="0.7" Text="Nota" />
+                    </Grid>
+                </ListView.Header>
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="models:PrecioProductoItem">
+                        <Grid Padding="4,2" ColumnSpacing="6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="78" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="64" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" FontSize="12" Text="{x:Bind FechaTexto}" />
+                            <TextBlock
+                                Grid.Column="1"
+                                VerticalAlignment="Center"
+                                FontSize="12"
+                                FontWeight="SemiBold"
+                                Text="{x:Bind MontoTexto}" />
+                            <TextBlock
+                                Grid.Column="2"
+                                VerticalAlignment="Center"
+                                FontSize="12"
+                                Text="{x:Bind VariacionTexto}" />
+                            <TextBlock
+                                Grid.Column="3"
+                                VerticalAlignment="Center"
+                                FontSize="12"
+                                Opacity="0.65"
+                                Text="{x:Bind Nota}"
+                                TextTrimming="CharacterEllipsis" />
+                            <StackPanel Grid.Column="4" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+                                <Button
+                                    Padding="8,2"
+                                    MinHeight="28"
+                                    Click="EditarPrecio_Click"
+                                    Content="Editar"
+                                    FontSize="12"
+                                    Tag="{x:Bind Id}" />
+                                <Button
+                                    Padding="8,2"
+                                    MinHeight="28"
+                                    Click="BorrarPrecio_Click"
+                                    Content="Borrar"
+                                    FontSize="12"
+                                    Tag="{x:Bind Id}" />
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+    </Grid>
+</Page>

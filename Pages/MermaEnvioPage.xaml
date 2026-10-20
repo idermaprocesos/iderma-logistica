@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="IdermaFichas.Pages.MermaEnvioPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:model="using:IdermaFichas.Models">
+
+    <Grid Padding="24,16" RowSpacing="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid ColumnSpacing="12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button VerticalAlignment="Center" Click="Volver_Click" Content="Volver" />
+            <StackPanel Grid.Column="1" Spacing="2">
+                <TextBlock FontSize="20" FontWeight="SemiBold" Text="Enviar a merma" />
+                <TextBlock
+                    Opacity="0.75"
+                    Text="Revise el motivo de cada producto. La cantidad sale del lote más próximo a vencer; si pide más, sigue con el siguiente lote."
+                    TextWrapping="Wrap" />
+            </StackPanel>
+        </Grid>
+
+        <InfoBar x:Name="Aviso" Grid.Row="1" IsClosable="True" IsOpen="False" />
+
+        <ListView x:Name="Lista" Grid.Row="2" SelectionMode="None">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="model:LineaMermaEnvio">
+                    <Grid Padding="4,10" ColumnSpacing="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" MinWidth="180" />
+                            <ColumnDefinition Width="200" />
+                            <ColumnDefinition Width="110" />
+                            <ColumnDefinition Width="190" />
+                            <ColumnDefinition Width="180" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Spacing="2">
+                            <TextBlock FontWeight="SemiBold" Text="{x:Bind Nombre}" TextWrapping="Wrap" />
+                            <TextBlock Opacity="0.7" Text="{x:Bind Codigo}" />
+                            <TextBlock Opacity="0.7" Text="{x:Bind TextoStock}" />
+                        </StackPanel>
+                        <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{x:Bind ResumenLote}" TextWrapping="Wrap" />
+                        <NumberBox
+                            Grid.Column="2"
+                            Header="Cantidad"
+                            Minimum="0"
+                            SmallChange="1"
+                            SpinButtonPlacementMode="Compact"
+                            Value="{x:Bind Cantidad, Mode=TwoWay}" />
+                        <ComboBox
+                            Grid.Column="3"
+                            Header="Motivo"
+                            HorizontalAlignment="Stretch"
+                            ItemsSource="{x:Bind Motivos}"
+                            SelectedItem="{x:Bind Motivo, Mode=TwoWay}" />
+                        <TextBox
+                            Grid.Column="4"
+                            Header="Detalle"
+                            PlaceholderText="Opcional"
+                            Text="{x:Bind Detalle, Mode=TwoWay}" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <Button
+            Grid.Row="3"
+            HorizontalAlignment="Right"
+            Click="Enviar_Click"
+            Content="Enviar a merma"
+            Style="{StaticResource AccentButtonStyle}" />
+    </Grid>
+</Page>

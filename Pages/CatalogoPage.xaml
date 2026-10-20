@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="IdermaFichas.Pages.CatalogoPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:IdermaFichas.Models"
+    mc:Ignorable="d">
+
+    <Grid Padding="24,16,24,16" RowSpacing="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid ColumnSpacing="16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Spacing="4">
+                <TextBlock x:Name="TituloPagina" Style="{StaticResource TituloPaginaStyle}" Text="Inventario" />
+                <TextBlock
+                    x:Name="ResumenLista"
+                    Style="{StaticResource SubtituloPaginaStyle}"
+                    Text="Todas las fichas técnicas de la clínica." />
+            </StackPanel>
+            <CommandBar
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                Background="Transparent"
+                DefaultLabelPosition="Right"
+                OverflowButtonVisibility="Auto">
+                <AppBarButton
+                    x:Name="BotonActualizar"
+                    Icon="Refresh"
+                    Label="Actualizar"
+                    Click="Actualizar_Click"
+                    ToolTipService.ToolTip="Volver a cargar la base de datos del inventario" />
+                <AppBarButton
+                    Icon="Save"
+                    Label="Ficha"
+                    Click="ExportarFicha_Click"
+                    ToolTipService.ToolTip="Exportar ficha (PDF/Excel)" />
+                <AppBarButton
+                    Icon="Copy"
+                    Label="Selección"
+                    Click="ExportarConsolidado_Click"
+                    ToolTipService.ToolTip="Exportar seleccionadas (PDF/Excel)" />
+                <AppBarButton
+                    Icon="Delete"
+                    Label="Borrar"
+                    Click="EliminarSeleccionadas_Click"
+                    ToolTipService.ToolTip="Borrar seleccionados" />
+                <AppBarButton
+                    Icon="Remove"
+                    Label="Enviar a merma"
+                    Click="EnviarMerma_Click"
+                    ToolTipService.ToolTip="Quitar del inventario los productos marcados, empezando por el lote más próximo a vencer" />
+                <AppBarButton
+                    x:Name="BotonMoverArea"
+                    Icon="MoveToFolder"
+                    Label="Área"
+                    ToolTipService.ToolTip="Mover el producto o la selección a otra área">
+                    <AppBarButton.Flyout>
+                        <MenuFlyout Opening="MenuMoverArea_Opening" />
+                    </AppBarButton.Flyout>
+                </AppBarButton>
+                <AppBarButton
+                    Icon="Document"
+                    Label="Plantilla"
+                    Click="Plantilla_Click"
+                    ToolTipService.ToolTip="Plantilla Excel" />
+                <AppBarButton
+                    Icon="OpenFile"
+                    Label="Importar"
+                    Click="ImportarExcel_Click"
+                    ToolTipService.ToolTip="Importar Excel" />
+            </CommandBar>
+        </Grid>
+
+        <StackPanel Grid.Row="1" Spacing="8">
+            <StackPanel x:Name="PanelChipsArea" Orientation="Horizontal" Spacing="8" />
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <ToggleButton
+                    x:Name="ChipStockCritico"
+                    Click="ChipStock_Click">
+                    <TextBlock x:Name="TextoChipStock" Text="Stock crítico" />
+                </ToggleButton>
+                <ToggleButton
+                    x:Name="ChipVencidos"
+                    Click="ChipCaducidad_Click"
+                    Tag="1">
+                    <TextBlock x:Name="TextoChipVencidos" Text="Vencidos" />
+                </ToggleButton>
+                <ToggleButton
+                    x:Name="ChipProximos"
+                    Click="ChipCaducidad_Click"
+                    Tag="2">
+                    <TextBlock x:Name="TextoChipProximos" Text="Próximos 30 días" />
+                </ToggleButton>
+                <Button Click="LimpiarFiltros_Click" Content="Limpiar filtros" />
+            </StackPanel>
+        </StackPanel>
+
+        <Grid Grid.Row="2" ColumnSpacing="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBox
+                x:Name="CajaBusqueda"
+                    PlaceholderText="Buscar por código, nombre, categoría, proveedor, ubicación o lote"
+                TextChanged="Filtros_Changed" />
+            <ComboBox
+                x:Name="ComboArea"
+                Grid.Column="1"
+                HorizontalAlignment="Stretch"
+                SelectionChanged="Filtros_Changed" />
+            <ComboBox
+                x:Name="ComboOrden"
+                Grid.Column="2"
+                HorizontalAlignment="Stretch"
+                SelectionChanged="Filtros_Changed" />
+            <ToggleButton
+                x:Name="BotonModoSeleccionar"
+                Grid.Column="3"
+                HorizontalAlignment="Stretch"
+                Click="ModoSeleccionar_Click"
+                ToolTipService.ToolTip="Con el modo activo, el clic marca productos y no abre la ficha. Ctrl izquierdo añade o quita uno. Mayús marca un rango.">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <FontIcon FontSize="14" Glyph="&#xE8B3;" />
+                    <TextBlock x:Name="TextoModoSeleccionar" Text="Seleccionar" />
+                </StackPanel>
+            </ToggleButton>
+            <DropDownButton
+                Grid.Column="4"
+                VerticalAlignment="Stretch"
+                        ToolTipService.ToolTip="Marca o desmarca la lista visible: todas, ninguna, cruzada o armonía.">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                    <FontIcon FontSize="14" Glyph="&#xE8A5;" />
+                    <TextBlock Text="Marcar lista" />
+                </StackPanel>
+                <DropDownButton.Flyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Click="SeleccionarTodas_Click" Text="Seleccionar todas" />
+                        <MenuFlyoutItem Click="DeseleccionarTodas_Click" Text="Deseleccionar todas" />
+                        <MenuFlyoutSeparator />
+                        <MenuFlyoutItem Click="SeleccionarCruzada_Click" Text="Selección cruzada (una sí, una no)" />
+                        <MenuFlyoutItem Click="SeleccionarArmonia_Click" Text="Selección armonía (dos sí, una no)" />
+                    </MenuFlyout>
+                </DropDownButton.Flyout>
+            </DropDownButton>
+        </Grid>
+
+        <Grid Grid.Row="3" ColumnSpacing="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <ComboBox
+                x:Name="ComboStock"
+                HorizontalAlignment="Stretch"
+                Header="Stock"
+                SelectionChanged="Filtros_Changed" />
+            <ComboBox
+                x:Name="ComboCaducidad"
+                Grid.Column="1"
+                HorizontalAlignment="Stretch"
+                Header="Caducidad"
+                SelectionChanged="Filtros_Changed" />
+            <ComboBox
+                x:Name="ComboCategoria"
+                Grid.Column="2"
+                HorizontalAlignment="Stretch"
+                Header="Categoría"
+                SelectionChanged="Filtros_Changed" />
+            <ComboBox
+                x:Name="ComboProveedor"
+                Grid.Column="3"
+                HorizontalAlignment="Stretch"
+                Header="Proveedor"
+                SelectionChanged="Filtros_Changed" />
+            <ComboBox
+                x:Name="ComboUbicacion"
+                Grid.Column="4"
+                HorizontalAlignment="Stretch"
+                Header="Ubicación"
+                SelectionChanged="Filtros_Changed" />
+            <ComboBox
+                x:Name="ComboLote"
+                Grid.Column="5"
+                HorizontalAlignment="Stretch"
+                Header="Lote"
+                SelectionChanged="Filtros_Changed" />
+        </Grid>
+
+        <ListView
+            x:Name="ListaCatalogo"
+            Grid.Row="4"
+            IsItemClickEnabled="True"
+            ItemClick="ListaCatalogo_ItemClick"
+            KeyDown="ListaCatalogo_KeyDown"
+            SelectionMode="None">
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsStackPanel />
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ListView.Header>
+                <Grid Padding="12,8" ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="36" />
+                        <ColumnDefinition Width="88" />
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="240" />
+                        <ColumnDefinition Width="90" />
+                        <ColumnDefinition Width="180" />
+                        <ColumnDefinition Width="100" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock FontWeight="SemiBold" Opacity="0.7" Text="" />
+                    <TextBlock Grid.Column="1" FontWeight="SemiBold" Opacity="0.7" Text="Código" />
+                    <TextBlock Grid.Column="2" FontWeight="SemiBold" Opacity="0.7" Text="Producto" />
+                    <TextBlock Grid.Column="3" FontWeight="SemiBold" Opacity="0.7" Text="Área" />
+                    <TextBlock
+                        Grid.Column="4"
+                        HorizontalAlignment="Center"
+                        FontWeight="SemiBold"
+                        Opacity="0.7"
+                        Text="Existencia"
+                        TextAlignment="Center" />
+                    <TextBlock Grid.Column="5" FontWeight="SemiBold" Opacity="0.7" Text="Caducidad" />
+                    <TextBlock Grid.Column="6" FontWeight="SemiBold" Opacity="0.7" Text="Exportar" />
+                </Grid>
+            </ListView.Header>
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="models:FichaListaItem">
+                    <Grid Padding="4,10" ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="36" />
+                            <ColumnDefinition Width="88" />
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="240" />
+                            <ColumnDefinition Width="90" />
+                            <ColumnDefinition Width="180" />
+                            <ColumnDefinition Width="100" />
+                        </Grid.ColumnDefinitions>
+                        <CheckBox
+                            MinWidth="32"
+                            MinHeight="32"
+                            Padding="4"
+                            VerticalAlignment="Center"
+                            Click="MarcaFicha_Click"
+                            Tapped="MarcaFicha_Tapped"
+                            IsChecked="{x:Bind EstaMarcada, Mode=TwoWay}"
+                            Tag="{x:Bind Ficha.Id}" />
+                        <TextBlock Grid.Column="1" VerticalAlignment="Center" FontWeight="SemiBold" Text="{x:Bind Ficha.Codigo, Mode=OneWay}" />
+                        <StackPanel Grid.Column="2" Spacing="2">
+                            <TextBlock FontWeight="SemiBold" Text="{x:Bind Ficha.Nombre, Mode=OneWay}" />
+                            <TextBlock Opacity="0.65" Text="{x:Bind Ficha.Resumen, Mode=OneWay}" />
+                        </StackPanel>
+                        <TextBlock Grid.Column="3" VerticalAlignment="Center" Text="{x:Bind Ficha.AreaTitulo, Mode=OneWay}" />
+                        <TextBlock
+                            Grid.Column="4"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Text="{x:Bind ExistenciaTexto, Mode=OneWay}"
+                            TextAlignment="Center" />
+                        <StackPanel Grid.Column="5" Spacing="2" VerticalAlignment="Center">
+                            <TextBlock Text="{x:Bind Ficha.FechaCaducidadTexto, Mode=OneWay}" />
+                            <TextBlock Opacity="0.7" Text="{x:Bind Ficha.EstadoCaducidadTexto, Mode=OneWay}" />
+                        </StackPanel>
+                        <Button
+                            Grid.Column="6"
+                            VerticalAlignment="Center"
+                            Click="ExportarFila_Click"
+                            Content="Exportar"
+                            Tag="{x:Bind Ficha.Id}"
+                            ToolTipService.ToolTip="Exportar esta ficha en PDF o Excel" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</Page>

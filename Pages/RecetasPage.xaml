@@ -1,0 +1,540 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="IdermaFichas.Pages.RecetasPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:models="using:IdermaFichas.Models">
+
+    <Grid Padding="24,16,20,16" RowSpacing="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <StackPanel Spacing="2">
+                <TextBlock
+                    Opacity="0.7"
+                    Style="{StaticResource CaptionTextBlockStyle}"
+                    Text="PERSONAL MÉDICO" />
+                <TextBlock x:Name="TituloPagina" Style="{StaticResource TituloPaginaStyle}" Text="Recetas" />
+                <TextBlock
+                    Style="{StaticResource SubtituloPaginaStyle}"
+                    Text="Elija el médico que receta, abra una lista y complete paciente y medicamentos. A la derecha se ve la receta mientras escribe." />
+            </StackPanel>
+            <StackPanel
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Orientation="Horizontal"
+                Spacing="8">
+                <ComboBox
+                    x:Name="ComboDoctores"
+                    MinWidth="520"
+                    MaxWidth="720"
+                    Header="Médico que receta"
+                    SelectionChanged="ComboDoctores_SelectionChanged">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="models:Doctor">
+                            <TextBlock
+                                Text="{x:Bind LineaDesplegable}"
+                                TextTrimming="CharacterEllipsis"
+                                TextWrapping="NoWrap" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <Button
+                    VerticalAlignment="Bottom"
+                    Click="ExportarPdf_Click"
+                    Content="Exportar PDF"
+                    Style="{StaticResource AccentButtonStyle}" />
+                <Button
+                    VerticalAlignment="Bottom"
+                    Click="EditarDoctor_Click"
+                    Content="Editar doctores" />
+            </StackPanel>
+        </Grid>
+
+        <InfoBar
+            x:Name="Barra"
+            Grid.Row="1"
+            IsClosable="True"
+            IsOpen="False" />
+
+        <Grid Grid.Row="2" ColumnSpacing="14">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="240" />
+                <ColumnDefinition Width="*" MinWidth="320" />
+                <ColumnDefinition Width="1.15*" MinWidth="420" />
+            </Grid.ColumnDefinitions>
+
+            <Border Padding="12,10" Style="{StaticResource TarjetaKpiStyle}">
+                <Grid RowSpacing="8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid ColumnSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock
+                                Opacity="0.6"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Text="PASO 1" />
+                            <TextBlock FontWeight="SemiBold" Text="Lista / plantilla" />
+                        </StackPanel>
+                        <Button
+                            Grid.Column="1"
+                            Click="NuevaLista_Click"
+                            Content="Nueva"
+                            Style="{StaticResource AccentButtonStyle}" />
+                    </Grid>
+                    <ListView
+                        x:Name="ListaListas"
+                        Grid.Row="1"
+                        SelectionChanged="ListaListas_SelectionChanged">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="models:ListaReceta">
+                                <StackPanel Padding="0,6" Spacing="1">
+                                    <TextBlock FontWeight="SemiBold" Text="{x:Bind Nombre}" TextWrapping="Wrap" />
+                                    <TextBlock Opacity="0.7" Text="{x:Bind Resumen}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </Border>
+
+            <!-- 3: formulario -->
+            <Grid Grid.Column="1">
+                <TextBlock
+                    x:Name="AyudaInicio"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Opacity="0.65"
+                    Text="Elija el médico que receta arriba para empezar."
+                    TextAlignment="Center"
+                    TextWrapping="Wrap" />
+
+                <ScrollViewer x:Name="PanelTrabajo" Visibility="Collapsed">
+                    <StackPanel Spacing="12">
+                        <Border
+                            x:Name="Formulario"
+                            Padding="14,12"
+                            Style="{StaticResource TarjetaKpiStyle}"
+                            Visibility="Collapsed">
+                            <StackPanel Spacing="12">
+                                <Grid>
+                                    <StackPanel>
+                                        <TextBlock
+                                            Opacity="0.6"
+                                            Style="{StaticResource CaptionTextBlockStyle}"
+                                            Text="PASO 2" />
+                                        <TextBlock FontWeight="SemiBold" Text="Complete esta receta" />
+                                    </StackPanel>
+                                    <StackPanel
+                                        HorizontalAlignment="Right"
+                                        Orientation="Horizontal"
+                                        Spacing="8">
+                                        <Button
+                                            Click="GuardarLista_Click"
+                                            Content="Guardar lista"
+                                            Style="{StaticResource AccentButtonStyle}" />
+                                        <Button Click="BorrarLista_Click" Content="Eliminar lista" />
+                                    </StackPanel>
+                                </Grid>
+
+                                <TextBox
+                                    x:Name="CajaNombreLista"
+                                    Header="Nombre de la plantilla"
+                                    TextChanged="Campo_TextChanged" />
+
+                                <TextBlock FontWeight="SemiBold" Text="Paciente" />
+                                <Grid ColumnSpacing="8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox
+                                        x:Name="CajaPaciente"
+                                        Header="Nombre"
+                                        PlaceholderText="Obligatorio para el PDF"
+                                        TextChanged="Campo_TextChanged" />
+                                    <TextBox
+                                        x:Name="CajaDocumento"
+                                        Grid.Column="1"
+                                        Header="DNI / documento"
+                                        TextChanged="Campo_TextChanged" />
+                                </Grid>
+                                <TextBox
+                                    x:Name="CajaDiagnosticoPaciente"
+                                    Header="Diagnóstico"
+                                    TextChanged="Campo_TextChanged" />
+                                <TextBox
+                                    x:Name="CajaIndicacionesPaciente"
+                                    AcceptsReturn="True"
+                                    Header="Indicaciones para el paciente"
+                                    MinHeight="56"
+                                    TextChanged="Campo_TextChanged"
+                                    TextWrapping="Wrap" />
+
+                                <TextBox
+                                    x:Name="CajaDiagnosticoLista"
+                                    Header="Diagnóstico habitual de esta plantilla"
+                                    TextChanged="Campo_TextChanged" />
+                                <TextBox
+                                    x:Name="CajaIndicacionesLista"
+                                    AcceptsReturn="True"
+                                    Header="Indicaciones generales de la plantilla"
+                                    MinHeight="48"
+                                    TextChanged="Campo_TextChanged"
+                                    TextWrapping="Wrap" />
+
+                                <TextBlock FontWeight="SemiBold" Text="Medicamentos de esta receta" />
+                                <AutoSuggestBox
+                                    x:Name="CajaBuscarProducto"
+                                    Header="Buscar en el catálogo Iderma"
+                                    PlaceholderText="Nombre o código"
+                                    QueryIcon="Find"
+                                    SuggestionChosen="CajaBuscarProducto_SuggestionChosen"
+                                    TextChanged="CajaBuscarProducto_TextChanged" />
+                                <AutoSuggestBox
+                                    x:Name="CajaNombreMedicamento"
+                                    Header="Nombre del medicamento"
+                                    PlaceholderText="Escriba o elija de la medicación común"
+                                    QueryIcon="Find"
+                                    SuggestionChosen="CajaNombreMedicamento_SuggestionChosen"
+                                    TextChanged="CajaNombreMedicamento_TextChanged" />
+                                <Grid ColumnSpacing="8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox
+                                        x:Name="CajaDosis"
+                                        Header="Dosis"
+                                        PlaceholderText="Ej. 1"
+                                        TextChanged="Campo_TextChanged" />
+                                    <ComboBox
+                                        x:Name="ComboDosisUnidad"
+                                        Grid.Column="1"
+                                        HorizontalAlignment="Stretch"
+                                        Header="Unidad"
+                                        IsEditable="True"
+                                        LostFocus="Campo_LostFocus"
+                                        SelectionChanged="Campo_SelectionChanged" />
+                                    <ComboBox
+                                        x:Name="ComboVia"
+                                        Grid.Column="2"
+                                        HorizontalAlignment="Stretch"
+                                        Header="Vía"
+                                        IsEditable="True"
+                                        LostFocus="Campo_LostFocus"
+                                        SelectionChanged="Campo_SelectionChanged" />
+                                </Grid>
+                                <Grid ColumnSpacing="8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <ComboBox
+                                        x:Name="ComboFrecuencia"
+                                        HorizontalAlignment="Stretch"
+                                        Header="Frecuencia"
+                                        IsEditable="True"
+                                        LostFocus="Campo_LostFocus"
+                                        SelectionChanged="Campo_SelectionChanged" />
+                                    <ComboBox
+                                        x:Name="ComboHorario"
+                                        Grid.Column="1"
+                                        HorizontalAlignment="Stretch"
+                                        Header="Horario"
+                                        IsEditable="True"
+                                        LostFocus="Campo_LostFocus"
+                                        SelectionChanged="Campo_SelectionChanged" />
+                                    <ComboBox
+                                        x:Name="ComboDuracion"
+                                        Grid.Column="2"
+                                        HorizontalAlignment="Stretch"
+                                        Header="Duración"
+                                        IsEditable="True"
+                                        LostFocus="Campo_LostFocus"
+                                        SelectionChanged="Campo_SelectionChanged" />
+                                </Grid>
+                                <Grid ColumnSpacing="8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox
+                                        x:Name="CajaCantidad"
+                                        Header="Despachar"
+                                        PlaceholderText="Ej. 21"
+                                        TextChanged="Campo_TextChanged" />
+                                    <ComboBox
+                                        x:Name="ComboUnidadDespacho"
+                                        Grid.Column="1"
+                                        HorizontalAlignment="Stretch"
+                                        Header="Presentación"
+                                        IsEditable="True"
+                                        LostFocus="Campo_LostFocus"
+                                        SelectionChanged="Campo_SelectionChanged" />
+                                    <TextBox
+                                        x:Name="CajaIndicacionItem"
+                                        Grid.Column="2"
+                                        Header="Cómo usarlo"
+                                        TextChanged="Campo_TextChanged" />
+                                </Grid>
+                                <Button Click="AgregarItem_Click" Content="Agregar medicamento a la receta" />
+
+                                <ListView
+                                    x:Name="ListaItems"
+                                    MinHeight="40"
+                                    SelectionMode="None">
+                                    <ListView.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Vertical" Spacing="4" />
+                                        </ItemsPanelTemplate>
+                                    </ListView.ItemsPanel>
+                                    <ListView.ItemContainerStyle>
+                                        <Style TargetType="ListViewItem">
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                            <Setter Property="VerticalContentAlignment" Value="Top" />
+                                            <Setter Property="MinHeight" Value="0" />
+                                            <Setter Property="Padding" Value="0,2" />
+                                        </Style>
+                                    </ListView.ItemContainerStyle>
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate x:DataType="models:ItemRecetaVista">
+                                            <Grid ColumnSpacing="8">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel Spacing="1">
+                                                    <TextBlock FontWeight="SemiBold" Text="{x:Bind Nombre}" TextWrapping="Wrap" />
+                                                    <TextBlock
+                                                        Opacity="0.78"
+                                                        Text="{x:Bind Detalle}"
+                                                        TextWrapping="Wrap" />
+                                                </StackPanel>
+                                                <Button
+                                                    Grid.Column="1"
+                                                    VerticalAlignment="Top"
+                                                    Click="QuitarItem_Click"
+                                                    Content="Quitar"
+                                                    Tag="{x:Bind IdTexto}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+
+            <!-- Vista previa -->
+            <Border
+                Grid.Column="2"
+                Padding="14"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="12">
+                <Grid RowSpacing="8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <StackPanel>
+                        <TextBlock
+                            FontSize="11"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Text="VISTA PREVIA DE LA RECETA" />
+                        <TextBlock
+                            x:Name="PreviewMarca"
+                            FontSize="13"
+                            FontWeight="Bold"
+                            Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                            Text="IDERMA CAPILAR" />
+                    </StackPanel>
+                    <ScrollViewer Grid.Row="1">
+                        <StackPanel Spacing="8">
+                            <TextBlock
+                                FontSize="16"
+                                FontWeight="Bold"
+                                Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                Text="RECETA MÉDICA" />
+                            <TextBlock
+                                x:Name="PreviewFolio"
+                                FontSize="11"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            <TextBlock
+                                FontSize="10"
+                                FontWeight="SemiBold"
+                                Foreground="#C9A227"
+                                Text="MÉDICO" />
+                            <TextBlock
+                                x:Name="PreviewMedico"
+                                FontWeight="SemiBold"
+                                Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                TextWrapping="Wrap" />
+                            <TextBlock
+                                x:Name="PreviewMedicoDetalle"
+                                FontSize="11"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                TextWrapping="Wrap" />
+                            <TextBlock
+                                FontSize="10"
+                                FontWeight="SemiBold"
+                                Foreground="#C9A227"
+                                Text="PACIENTE" />
+                            <TextBlock
+                                x:Name="PreviewPaciente"
+                                FontWeight="SemiBold"
+                                Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                TextWrapping="Wrap" />
+                            <TextBlock
+                                x:Name="PreviewPacienteDetalle"
+                                FontSize="11"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                TextWrapping="Wrap" />
+                            <TextBlock
+                                FontSize="10"
+                                FontWeight="SemiBold"
+                                Foreground="#C9A227"
+                                Text="INDICACIÓN FARMACOLÓGICA" />
+                            <ItemsControl x:Name="ListaPreview">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Margin="0,0,0,8">
+                                            <TextBlock
+                                                FontWeight="SemiBold"
+                                                Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                                Text="{Binding Nombre}"
+                                                TextWrapping="Wrap" />
+                                            <TextBlock
+                                                FontSize="11"
+                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                Text="{Binding Detalle}"
+                                                TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <TextBlock
+                                x:Name="PreviewVacioMeds"
+                                FontSize="11"
+                                FontStyle="Italic"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="Agregue medicamentos para verlos aquí."
+                                TextWrapping="Wrap" />
+                            <TextBlock
+                                x:Name="PreviewTituloIndicaciones"
+                                FontSize="10"
+                                FontWeight="SemiBold"
+                                Foreground="#C9A227"
+                                Text="INDICACIONES"
+                                Visibility="Collapsed" />
+                            <TextBlock
+                                x:Name="PreviewIndicaciones"
+                                FontSize="11"
+                                Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                TextWrapping="Wrap" />
+                            <StackPanel Margin="40,24,40,0">
+                                <Border
+                                    Height="48"
+                                    BorderBrush="{ThemeResource TextFillColorSecondaryBrush}"
+                                    BorderThickness="0,0,0,1" />
+                                <TextBlock
+                                    FontSize="10"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Text="Firma y sello del médico"
+                                    TextAlignment="Center" />
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <ContentDialog
+            x:Name="DialogoDoctor"
+            Grid.RowSpan="3"
+            Title="Datos del médico"
+            CloseButtonText="Cerrar"
+            DefaultButton="Primary"
+            MinWidth="720"
+            PrimaryButtonClick="DialogoDoctor_PrimaryButtonClick"
+            PrimaryButtonText="Guardar"
+            Style="{ThemeResource DefaultContentDialogStyle}">
+            <ContentDialog.Resources>
+                <x:Double x:Key="ContentDialogMinWidth">720</x:Double>
+                <x:Double x:Key="ContentDialogMaxWidth">800</x:Double>
+            </ContentDialog.Resources>
+            <ScrollViewer MaxWidth="680" MinWidth="620" MaxHeight="520">
+                <StackPanel Spacing="10">
+                    <TextBlock
+                        x:Name="AvisoDoctor"
+                        Foreground="#C42B1C"
+                        TextWrapping="Wrap"
+                        Visibility="Collapsed" />
+                    <TextBox
+                        x:Name="CajaNombreDoctor"
+                        Header="Nombre"
+                        PlaceholderText="Ej. Dr. Nombre Apellido"
+                        TextChanged="Campo_TextChanged" />
+                    <Grid ColumnSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox
+                            x:Name="CajaColegiatura"
+                            Header="CMP"
+                            TextChanged="Campo_TextChanged" />
+                        <TextBox
+                            x:Name="CajaRne"
+                            Grid.Column="1"
+                            Header="RNE"
+                            TextChanged="Campo_TextChanged" />
+                    </Grid>
+                    <TextBox
+                        x:Name="CajaEspecialidad"
+                        Header="Especialidad"
+                        TextChanged="Campo_TextChanged" />
+                    <Grid ColumnSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox
+                            x:Name="CajaTelefonoDoctor"
+                            Header="Teléfono"
+                            TextChanged="Campo_TextChanged" />
+                        <TextBox
+                            x:Name="CajaCorreoDoctor"
+                            Grid.Column="1"
+                            Header="Correo"
+                            TextChanged="Campo_TextChanged" />
+                    </Grid>
+                    <ToggleSwitch
+                        x:Name="SwitchDoctorActivo"
+                        Header="Activo"
+                        OffContent="No"
+                        OnContent="Sí"
+                        Toggled="Campo_Toggled" />
+                    <Button Click="NuevoDoctor_Click" Content="Nuevo médico" />
+                    <Button Click="BorrarDoctor_Click" Content="Eliminar médico" />
+                </StackPanel>
+            </ScrollViewer>
+        </ContentDialog>
+    </Grid>
+</Page>
